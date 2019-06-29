@@ -21,5 +21,3 @@ This workshop assumes basic familiarity with mixed models, and
 familiarity with R, especially the lme4 package. However, this is a
 brief demonstration with a simple goal of bringing about awareness of
 other useful tools, so one can simply attend to hear about them.
-
-test
