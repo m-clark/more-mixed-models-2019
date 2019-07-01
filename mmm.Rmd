@@ -1,0 +1,59 @@
+---
+title: "More Mixed Models"
+output: html_notebook
+editor_options: 
+  chunk_output_type: inline
+---
+
+```{r html_setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo=T, 
+  message = F, 
+  warning = F, 
+  comment = NA,
+  R.options=list(width=120), 
+  cache.rebuild=F, 
+  cache=T,
+  fig.align='center', 
+  fig.asp = .7,
+  dev = 'svg', 
+  dev.args=list(bg = 'transparent')
+)
+```
+
+```{r preliminaries}
+library(tidyverse)
+```
+
+
+## glmmTMB
+
+```{r glmmTMB}
+fish = read_csv("https://stats.idre.ucla.edu/stat/data/fish.csv")
+```
+
+
+### Advantages
+- Developed by one of the lme4 authors
+- More distributions
+- Heterogeneous variance, residual correlation
+- Model variance
+- Nicely printed output
+
+### Other
+- Still in development for some areas
+
+
+## Bayesian Approaches
+### Advantages
+### Other
+
+## mgcv
+### Advantages
+### Other
+
+
+
+## Python
+### Advantages
+### Other
