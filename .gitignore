@@ -16,3 +16,4 @@ vignettes/*.pdf
 .httr-oauth
 
 .DS_Store
+*_cache

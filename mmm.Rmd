@@ -1,7 +1,10 @@
 ---
 title: "More Mixed Models"
-output: html_notebook
-editor_options: 
+output:
+  html_document:
+    df_print: paged
+  html_notebook:
+editor_options:
   chunk_output_type: inline
 ---
 
@@ -23,13 +26,24 @@ knitr::opts_chunk$set(
 
 ```{r preliminaries}
 library(tidyverse)
+# devtools::install_github('m-clark/noiris')
+library(noiris)
 ```
 
 
 ## glmmTMB
 
+>Fit linear and generalized linear mixed models with various
+    extensions, including zero-inflation. The models are fitted using maximum
+    likelihood estimation via 'TMB' (Template Model Builder). Random effects are
+    assumed to be Gaussian on the scale of the linear predictor and are integrated
+    out using the Laplace approximation. Gradients are calculated using automatic
+    differentiation.
+    
+- main function: `glmmTMB`
+    
 ```{r glmmTMB}
-fish = read_csv("https://stats.idre.ucla.edu/stat/data/fish.csv")
+fish
 ```
 
 
@@ -45,15 +59,76 @@ fish = read_csv("https://stats.idre.ucla.edu/stat/data/fish.csv")
 
 
 ## Bayesian Approaches
+### rstanarm
+
+>The rstanarm package is an appendage to the rstan package that enables many of the most common applied regression models to be estimated using Markov Chain Monte Carlo, variational approximations to the posterior distribution, or optimization. The rstanarm package allows these models to be specified using the customary R modeling syntax.
+
+- main function: `stan_*`
+
+### brms
+
+>The `brms` package provides an interface to fit Bayesian generalized multivariate (non-)linear multilevel models using `Stan`, which is a C++ package for obtaining full Bayesian inference (see http://mc-stan.org/). The formula syntax is an extended version of the syntax applied in the lme4 package to provide a familiar and simple interface for performing regression analyses.
+
+- main function: `brm`
+
 ### Advantages
+
+#### rstanarm
+
+- same lme4 syntax
+- same lme4 function names
+- no compilation time
+
+#### brms
+
+- same lme4 syntax
+- heterogenous variances
+- autocorrelation
+- more distributions
+- heterogeneous variance components
+- multivariate models with correlated random effects
+- multimembership models
+- phylogenetic structures
+- missing data imputation
+- indirect effects
+
 ### Other
+
+- Bayesian techniques are slower due to the way they are estimated, but for many situations not prohibitively so
+
 
 ## mgcv
+
+> `mgcv` provides functions for generalized additive modelling (`gam` and `bam`) and generalized additive mixed modelling (`gamm`, and `random.effects`). The term GAM is taken to include any model dependent on unknown smooth functions of predictors and estimated by quadratically penalized (possibly quasi-) likelihood maximization. Available distributions are covered in `family.mgcv` and available smooths in `smooth.terms.`
+
+- main function: `gam` (also `bam`)
+
+
 ### Advantages
 ### Other
 
 
 
-## Python
+## Python Statsmodels
+
+
+```{python statsmodels, eval = F}
+import statsmodels.api as sm
+
+import statsmodels.formula.api as smf
+
+data = sm.datasets.get_rdataset("dietox", "geepack").data
+
+md = smf.mixedlm("Weight ~ Time", data, groups=data["Pig"])
+
+mdf = md.fit()
+
+print(mdf.summary())
+```
+
 ### Advantages
+
+- Allows one to stay in the Python world if desired
+- Clean/clear printout
+
 ### Other
