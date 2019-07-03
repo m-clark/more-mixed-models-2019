@@ -24,6 +24,34 @@ knitr::opts_chunk$set(
 )
 ```
 
+
+
+## Introduction
+
+Mixed models are an extremely useful modeling tool for situations in which there is some dependency among observations in the data, where the correlation typically arises from the observations being clustered in some way. For example, it is quite common to have data in which we have repeated measurements for the units of observation, or in which the units of observation are otherwise grouped together (e.g. students within school, cities within geographic region). While there are different ways to approach such a situation, mixed models are a very common and powerful tool to do so. In addition, they have ties to other statistical approaches that further expand their applicability.
+
+The following depicts a simple mixed model.  We have one predictor `x`, and one grouping variable as an additional source of variance.
+
+$$y = b_{\mathrm{intercept}} + b_{\mathrm{x}}\cdot \mathscr{x} + \mathrm{effect}_{\mathscr{group}} + \epsilon$$
+
+$$\mathrm{effect}_{\mathrm{group}} \sim \mathcal{N}(0, \tau^2)$$
+$$\epsilon \sim \mathcal{N}(0, \sigma^2)$$
+
+The above is the simplest model one would come across, often referred to as a random intercepts model, as the group effect is added to the intercept, and otherwise is a standard linear regression model.
+
+We can expand this to include other grouping variables for random effects, and allow any of the coefficients to vary among those groups.  This covers a wide range of modeling situations, and in that case, a package like `lme4` is ideal.  It is fast, efficient, and many other packages expand on it.
+
+
+However, there will be times where your data and model go beyond these situations, and if so, there are additional tools that can aid you in your exploration.
+
+
+## Goals
+
+- Demonstrate other packages and their approach to mixed models
+- Provide awareness of other possibilities for mixed models
+
+## Prerequisites
+
 ```{r preliminaries}
 library(tidyverse)
 # devtools::install_github('m-clark/noiris')
@@ -34,14 +62,15 @@ library(noiris)
 ## glmmTMB
 
 ### Description
->Fit linear and generalized linear mixed models with various extensions,
+
+> Fit linear and generalized linear mixed models with various extensions,
 including zero-inflation. The models are fitted using maximum likelihood
-estimation via 'TMB' (Template Model Builder). Random effects are assumed to be
-Gaussian on the scale of the linear predictor and are integrated out using the
-Laplace approximation. Gradients are calculated using automatic differentiation.
-    
+estimation via 'TMB' (Template Model Builder). 
+
 - main function: `glmmTMB`
     
+
+The glmmTMB package uses a different approach in estimating mixed models, 
     
 ### Examples
 ```{r glmmTMB}
@@ -50,6 +79,7 @@ fish
 
 
 ### Advantages
+
 - Developed by one of the lme4 authors
 - More distributions
 - Heterogeneous variance, residual correlation
@@ -57,26 +87,35 @@ fish
 - Nicely printed output
 
 ### Other
+
 - Still in development for some areas
 
 
 ## Bayesian Approaches
-### rstanarm
 
-#### Description
-#### Examples
->The rstanarm package is an appendage to the rstan package that enables many of the most common applied regression models to be estimated using Markov Chain Monte Carlo, variational approximations to the posterior distribution, or optimization. The rstanarm package allows these models to be specified using the customary R modeling syntax.
+Using a Bayesian approach to mixed models means the sky is the limit in terms of model flexibility.
+
+### Description
+
+#### rstanarm
+
+> The rstanarm package is an appendage to the rstan package that enables many of the most common applied regression models to be estimated using Markov Chain Monte Carlo, variational approximations to the posterior distribution, or optimization. The rstanarm package allows these models to be specified using the customary R modeling syntax.
 
 - main function: `stan_*`
 
-### brms
-
-#### Description
-#### Examples
-
->The `brms` package provides an interface to fit Bayesian generalized multivariate (non-)linear multilevel models using `Stan`, which is a C++ package for obtaining full Bayesian inference (see http://mc-stan.org/). The formula syntax is an extended version of the syntax applied in the lme4 package to provide a familiar and simple interface for performing regression analyses.
+#### brms
+> The `brms` package provides an interface to fit Bayesian generalized multivariate (non-)linear multilevel models using `Stan`, which is a C++ package for obtaining full Bayesian inference (see http://mc-stan.org/). The formula syntax is an extended version of the syntax applied in the lme4 package to provide a familiar and simple interface for performing regression analyses.
 
 - main function: `brm`
+
+### Examples
+
+```{r brms}
+library(brms)
+```
+
+
+
 
 ### Advantages
 
@@ -114,11 +153,23 @@ fish
 
 
 ### Advantages
+
+- addition of smooth terms
+- spatial random effects
+- autocorrelation
+- more distributions
+- can use lme4 or nlme in conjunction
+- seems to work better for glm
+- much better for very large data glm
+
 ### Other
 
-
+The mgcv package is one of the most powerful modeling tools in the R world in my opinion.  It can be used just for standard mixed models if desired.  It will be slower than lme4 for standard linear mixed models, but not prohibitively so, especially if you use bam.  If you go beyond such models, I've found it to be far faster than lme4 for very large glmm.
 
 ## Python Statsmodels
+
+If you happen to be using Python, you don't have to switch to another tool to do mixed models.
+
 #### Description
 #### Examples
 

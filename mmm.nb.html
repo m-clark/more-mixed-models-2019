@@ -1769,48 +1769,57 @@ $(document).ready(function () {
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-text-begin -->
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>Mixed models are an extremely useful modeling tool for situations in which there is some dependency among observations in the data, where the correlation typically arises from the observations being clustered in some way. For example, it is quite common to have data in which we have repeated measurements for the units of observation, or in which the units of observation are otherwise grouped together (e.g. students within school, cities within geographic region). While there are different ways to approach such a situation, mixed models are a very common and powerful tool to do so. In addition, they have ties to other statistical approaches that further expand their applicability.</p>
+<p>The following depicts a simple mixed model. We have one predictor <code>x</code>, and one grouping variable as an additional source of variance.</p>
+<p><span class="math display">\[y = b_{\mathrm{intercept}} + b_{\mathrm{x}}\cdot \mathscr{x} + \mathrm{effect}_{\mathscr{group}} + \epsilon\]</span></p>
+<p><span class="math display">\[\mathrm{effect}_{\mathrm{group}} \sim \mathcal{N}(0, \tau^2)\]</span> <span class="math display">\[\epsilon \sim \mathcal{N}(0, \sigma^2)\]</span></p>
+<p>The above is the simplest model one would come across, often referred to as a random intercepts model, as the group effect is added to the intercept, and otherwise is a standard linear regression model.</p>
+<p>We can expand this to include other grouping variables for random effects, and allow any of the coefficients to vary among those groups. This covers a wide range of modeling situations, and in that case, a package like <code>lme4</code> is ideal. It is fast, efficient, and many other packages expand on it.</p>
+<p>However, there will be times where your data and model go beyond these situations, and if so, there are additional tools that can aid you in your exploration.</p>
+</div>
+<div id="goals" class="section level2">
+<h2>Goals</h2>
+<ul>
+<li>Demonstrate other packages and their approach to mixed models</li>
+<li>Provide awareness of other possibilities for mixed models</li>
+</ul>
+</div>
+<div id="prerequisites" class="section level2">
+<h2>Prerequisites</h2>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxubGlicmFyeSh0aWR5dmVyc2UpXG5gYGBcbmBgYCJ9 -->
-<pre class="r"><code>```r
-library(tidyverse)</code></pre>
-<pre><code>
-&lt;!-- rnb-source-end --&gt;
-
-&lt;!-- rnb-chunk-end --&gt;
-
-
-&lt;!-- rnb-text-begin --&gt;
-
-
-
-## glmmTMB
-
-### Description
-&gt;Fit linear and generalized linear mixed models with various extensions,
-including zero-inflation. The models are fitted using maximum likelihood
-estimation via &#39;TMB&#39; (Template Model Builder). Random effects are assumed to be
-Gaussian on the scale of the linear predictor and are integrated out using the
-Laplace approximation. Gradients are calculated using automatic differentiation.
-    
-- main function: `glmmTMB`
-    
-    
-### Examples
-
-&lt;!-- rnb-text-end --&gt;
-
-
-&lt;!-- rnb-chunk-begin --&gt;
-
-
-&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZmlzaFxuYGBgIn0= --&gt;
-
-```r
-fish</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeSh0aWR5dmVyc2UpXG4jIGRldnRvb2xzOjppbnN0YWxsX2dpdGh1YignbS1jbGFyay9ub2lyaXMnKVxubGlicmFyeShub2lyaXMpXG5gYGAifQ== -->
+<pre class="r"><code>library(tidyverse)
+# devtools::install_github(&#39;m-clark/noiris&#39;)
+library(noiris)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
+</div>
+<div id="glmmtmb" class="section level2">
+<h2>glmmTMB</h2>
+<div id="description" class="section level3">
+<h3>Description</h3>
+<blockquote>
+<p>Fit linear and generalized linear mixed models with various extensions, including zero-inflation. The models are fitted using maximum likelihood estimation via ‘TMB’ (Template Model Builder).</p>
+</blockquote>
+<ul>
+<li>main function: <code>glmmTMB</code></li>
+</ul>
+<p>The glmmTMB package uses a different approach in estimating mixed models,</p>
+</div>
+<div id="examples" class="section level3">
+<h3>Examples</h3>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZmlzaFxuYGBgIn0= -->
+<pre class="r"><code>fish</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
 <div id="advantages" class="section level3">
 <h3>Advantages</h3>
 <ul>
@@ -1827,15 +1836,14 @@ fish</code></pre>
 <li>Still in development for some areas</li>
 </ul>
 </div>
+</div>
 <div id="bayesian-approaches" class="section level2">
 <h2>Bayesian Approaches</h2>
-<div id="rstanarm" class="section level3">
-<h3>rstanarm</h3>
-<div id="description" class="section level4">
-<h4>Description</h4>
-</div>
-<div id="examples" class="section level4">
-<h4>Examples</h4>
+<p>Using a Bayesian approach to mixed models means the sky is the limit in terms of model flexibility.</p>
+<div id="description-1" class="section level3">
+<h3>Description</h3>
+<div id="rstanarm" class="section level4">
+<h4>rstanarm</h4>
 <blockquote>
 <p>The rstanarm package is an appendage to the rstan package that enables many of the most common applied regression models to be estimated using Markov Chain Monte Carlo, variational approximations to the posterior distribution, or optimization. The rstanarm package allows these models to be specified using the customary R modeling syntax.</p>
 </blockquote>
@@ -1843,14 +1851,8 @@ fish</code></pre>
 <li>main function: <code>stan_*</code></li>
 </ul>
 </div>
-</div>
-<div id="brms" class="section level3">
-<h3>brms</h3>
-<div id="description-1" class="section level4">
-<h4>Description</h4>
-</div>
-<div id="examples-1" class="section level4">
-<h4>Examples</h4>
+<div id="brms" class="section level4">
+<h4>brms</h4>
 <blockquote>
 <p>The <code>brms</code> package provides an interface to fit Bayesian generalized multivariate (non-)linear multilevel models using <code>Stan</code>, which is a C++ package for obtaining full Bayesian inference (see <a href="http://mc-stan.org/" class="uri">http://mc-stan.org/</a>). The formula syntax is an extended version of the syntax applied in the lme4 package to provide a familiar and simple interface for performing regression analyses.</p>
 </blockquote>
@@ -1858,6 +1860,16 @@ fish</code></pre>
 <li>main function: <code>brm</code></li>
 </ul>
 </div>
+</div>
+<div id="examples-1" class="section level3">
+<h3>Examples</h3>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShicm1zKVxuYGBgIn0= -->
+<pre class="r"><code>library(brms)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
 </div>
 <div id="advantages-1" class="section level3">
 <h3>Advantages</h3>
@@ -1908,13 +1920,24 @@ fish</code></pre>
 </div>
 <div id="advantages-2" class="section level3">
 <h3>Advantages</h3>
+<ul>
+<li>addition of smooth terms</li>
+<li>spatial random effects</li>
+<li>autocorrelation</li>
+<li>more distributions</li>
+<li>can use lme4 or nlme in conjunction</li>
+<li>seems to work better for glm</li>
+<li>much better for very large data glm</li>
+</ul>
 </div>
 <div id="other-2" class="section level3">
 <h3>Other</h3>
+<p>The mgcv package is one of the most powerful modeling tools in the R world in my opinion. It can be used just for standard mixed models if desired. It will be slower than lme4 for standard linear mixed models, but not prohibitively so, especially if you use bam. If you go beyond such models, I’ve found it to be far faster than lme4 for very large glmm.</p>
 </div>
 </div>
 <div id="python-statsmodels" class="section level2">
 <h2>Python Statsmodels</h2>
+<p>If you happen to be using Python, you don’t have to switch to another tool to do mixed models.</p>
 <div id="description-3" class="section level4">
 <h4>Description</h4>
 </div>
@@ -1951,7 +1974,7 @@ print(mdf.summary())</code></pre>
 </div>
 </div>
 
-<div id="rmd-source-code">LS0tDQp0aXRsZTogIk1vcmUgTWl4ZWQgTW9kZWxzIg0Kb3V0cHV0Og0KICBodG1sX2RvY3VtZW50Og0KICAgIGRmX3ByaW50OiBwYWdlZA0KICBodG1sX25vdGVib29rOg0KZWRpdG9yX29wdGlvbnM6DQogIGNodW5rX291dHB1dF90eXBlOiBpbmxpbmUNCi0tLQ0KDQpgYGB7ciBodG1sX3NldHVwLCBpbmNsdWRlPUZBTFNFfQ0Ka25pdHI6Om9wdHNfY2h1bmskc2V0KA0KICBlY2hvPVQsIA0KICBtZXNzYWdlID0gRiwgDQogIHdhcm5pbmcgPSBGLCANCiAgY29tbWVudCA9IE5BLA0KICBSLm9wdGlvbnM9bGlzdCh3aWR0aD0xMjApLCANCiAgY2FjaGUucmVidWlsZD1GLCANCiAgY2FjaGU9VCwNCiAgZmlnLmFsaWduPSdjZW50ZXInLCANCiAgZmlnLmFzcCA9IC43LA0KICBkZXYgPSAnc3ZnJywgDQogIGRldi5hcmdzPWxpc3QoYmcgPSAndHJhbnNwYXJlbnQnKQ0KKQ0KYGBgDQoNCmBgYHtyIHByZWxpbWluYXJpZXN9DQpsaWJyYXJ5KHRpZHl2ZXJzZSkNCiMgZGV2dG9vbHM6Omluc3RhbGxfZ2l0aHViKCdtLWNsYXJrL25vaXJpcycpDQpsaWJyYXJ5KG5vaXJpcykNCmBgYA0KDQoNCiMjIGdsbW1UTUINCg0KIyMjIERlc2NyaXB0aW9uDQo+Rml0IGxpbmVhciBhbmQgZ2VuZXJhbGl6ZWQgbGluZWFyIG1peGVkIG1vZGVscyB3aXRoIHZhcmlvdXMgZXh0ZW5zaW9ucywNCmluY2x1ZGluZyB6ZXJvLWluZmxhdGlvbi4gVGhlIG1vZGVscyBhcmUgZml0dGVkIHVzaW5nIG1heGltdW0gbGlrZWxpaG9vZA0KZXN0aW1hdGlvbiB2aWEgJ1RNQicgKFRlbXBsYXRlIE1vZGVsIEJ1aWxkZXIpLiBSYW5kb20gZWZmZWN0cyBhcmUgYXNzdW1lZCB0byBiZQ0KR2F1c3NpYW4gb24gdGhlIHNjYWxlIG9mIHRoZSBsaW5lYXIgcHJlZGljdG9yIGFuZCBhcmUgaW50ZWdyYXRlZCBvdXQgdXNpbmcgdGhlDQpMYXBsYWNlIGFwcHJveGltYXRpb24uIEdyYWRpZW50cyBhcmUgY2FsY3VsYXRlZCB1c2luZyBhdXRvbWF0aWMgZGlmZmVyZW50aWF0aW9uLg0KICAgIA0KLSBtYWluIGZ1bmN0aW9uOiBgZ2xtbVRNQmANCiAgICANCiAgICANCiMjIyBFeGFtcGxlcw0KYGBge3IgZ2xtbVRNQn0NCmZpc2gNCmBgYA0KDQoNCiMjIyBBZHZhbnRhZ2VzDQotIERldmVsb3BlZCBieSBvbmUgb2YgdGhlIGxtZTQgYXV0aG9ycw0KLSBNb3JlIGRpc3RyaWJ1dGlvbnMNCi0gSGV0ZXJvZ2VuZW91cyB2YXJpYW5jZSwgcmVzaWR1YWwgY29ycmVsYXRpb24NCi0gTW9kZWwgdmFyaWFuY2UNCi0gTmljZWx5IHByaW50ZWQgb3V0cHV0DQoNCiMjIyBPdGhlcg0KLSBTdGlsbCBpbiBkZXZlbG9wbWVudCBmb3Igc29tZSBhcmVhcw0KDQoNCiMjIEJheWVzaWFuIEFwcHJvYWNoZXMNCiMjIyByc3RhbmFybQ0KDQojIyMjIERlc2NyaXB0aW9uDQojIyMjIEV4YW1wbGVzDQo+VGhlIHJzdGFuYXJtIHBhY2thZ2UgaXMgYW4gYXBwZW5kYWdlIHRvIHRoZSByc3RhbiBwYWNrYWdlIHRoYXQgZW5hYmxlcyBtYW55IG9mIHRoZSBtb3N0IGNvbW1vbiBhcHBsaWVkIHJlZ3Jlc3Npb24gbW9kZWxzIHRvIGJlIGVzdGltYXRlZCB1c2luZyBNYXJrb3YgQ2hhaW4gTW9udGUgQ2FybG8sIHZhcmlhdGlvbmFsIGFwcHJveGltYXRpb25zIHRvIHRoZSBwb3N0ZXJpb3IgZGlzdHJpYnV0aW9uLCBvciBvcHRpbWl6YXRpb24uIFRoZSByc3RhbmFybSBwYWNrYWdlIGFsbG93cyB0aGVzZSBtb2RlbHMgdG8gYmUgc3BlY2lmaWVkIHVzaW5nIHRoZSBjdXN0b21hcnkgUiBtb2RlbGluZyBzeW50YXguDQoNCi0gbWFpbiBmdW5jdGlvbjogYHN0YW5fKmANCg0KIyMjIGJybXMNCg0KIyMjIyBEZXNjcmlwdGlvbg0KIyMjIyBFeGFtcGxlcw0KDQo+VGhlIGBicm1zYCBwYWNrYWdlIHByb3ZpZGVzIGFuIGludGVyZmFjZSB0byBmaXQgQmF5ZXNpYW4gZ2VuZXJhbGl6ZWQgbXVsdGl2YXJpYXRlIChub24tKWxpbmVhciBtdWx0aWxldmVsIG1vZGVscyB1c2luZyBgU3RhbmAsIHdoaWNoIGlzIGEgQysrIHBhY2thZ2UgZm9yIG9idGFpbmluZyBmdWxsIEJheWVzaWFuIGluZmVyZW5jZSAoc2VlIGh0dHA6Ly9tYy1zdGFuLm9yZy8pLiBUaGUgZm9ybXVsYSBzeW50YXggaXMgYW4gZXh0ZW5kZWQgdmVyc2lvbiBvZiB0aGUgc3ludGF4IGFwcGxpZWQgaW4gdGhlIGxtZTQgcGFja2FnZSB0byBwcm92aWRlIGEgZmFtaWxpYXIgYW5kIHNpbXBsZSBpbnRlcmZhY2UgZm9yIHBlcmZvcm1pbmcgcmVncmVzc2lvbiBhbmFseXNlcy4NCg0KLSBtYWluIGZ1bmN0aW9uOiBgYnJtYA0KDQojIyMgQWR2YW50YWdlcw0KDQojIyMjIHJzdGFuYXJtDQoNCi0gc2FtZSBsbWU0IHN5bnRheA0KLSBzYW1lIGxtZTQgZnVuY3Rpb24gbmFtZXMNCi0gbm8gY29tcGlsYXRpb24gdGltZQ0KDQojIyMjIGJybXMNCg0KLSBzYW1lIGxtZTQgc3ludGF4DQotIGhldGVyb2dlbm91cyB2YXJpYW5jZXMNCi0gYXV0b2NvcnJlbGF0aW9uDQotIG1vcmUgZGlzdHJpYnV0aW9ucw0KLSBoZXRlcm9nZW5lb3VzIHZhcmlhbmNlIGNvbXBvbmVudHMNCi0gbXVsdGl2YXJpYXRlIG1vZGVscyB3aXRoIGNvcnJlbGF0ZWQgcmFuZG9tIGVmZmVjdHMNCi0gbXVsdGltZW1iZXJzaGlwIG1vZGVscw0KLSBwaHlsb2dlbmV0aWMgc3RydWN0dXJlcw0KLSBtaXNzaW5nIGRhdGEgaW1wdXRhdGlvbg0KLSBpbmRpcmVjdCBlZmZlY3RzDQoNCiMjIyBPdGhlcg0KDQotIEJheWVzaWFuIHRlY2huaXF1ZXMgYXJlIHNsb3dlciBkdWUgdG8gdGhlIHdheSB0aGV5IGFyZSBlc3RpbWF0ZWQsIGJ1dCBmb3IgbWFueSBzaXR1YXRpb25zIG5vdCBwcm9oaWJpdGl2ZWx5IHNvDQoNCg0KIyMgbWdjdg0KIyMjIyBEZXNjcmlwdGlvbg0KIyMjIyBFeGFtcGxlcw0KDQo+IGBtZ2N2YCBwcm92aWRlcyBmdW5jdGlvbnMgZm9yIGdlbmVyYWxpemVkIGFkZGl0aXZlIG1vZGVsbGluZyAoYGdhbWAgYW5kIGBiYW1gKSBhbmQgZ2VuZXJhbGl6ZWQgYWRkaXRpdmUgbWl4ZWQgbW9kZWxsaW5nIChgZ2FtbWAsIGFuZCBgcmFuZG9tLmVmZmVjdHNgKS4gVGhlIHRlcm0gR0FNIGlzIHRha2VuIHRvIGluY2x1ZGUgYW55IG1vZGVsIGRlcGVuZGVudCBvbiB1bmtub3duIHNtb290aCBmdW5jdGlvbnMgb2YgcHJlZGljdG9ycyBhbmQgZXN0aW1hdGVkIGJ5IHF1YWRyYXRpY2FsbHkgcGVuYWxpemVkIChwb3NzaWJseSBxdWFzaS0pIGxpa2VsaWhvb2QgbWF4aW1pemF0aW9uLiBBdmFpbGFibGUgZGlzdHJpYnV0aW9ucyBhcmUgY292ZXJlZCBpbiBgZmFtaWx5Lm1nY3ZgIGFuZCBhdmFpbGFibGUgc21vb3RocyBpbiBgc21vb3RoLnRlcm1zLmANCg0KLSBtYWluIGZ1bmN0aW9uOiBgZ2FtYCAoYWxzbyBgYmFtYCkNCg0KDQojIyMgQWR2YW50YWdlcw0KIyMjIE90aGVyDQoNCg0KDQojIyBQeXRob24gU3RhdHNtb2RlbHMNCiMjIyMgRGVzY3JpcHRpb24NCiMjIyMgRXhhbXBsZXMNCg0KYGBge3B5dGhvbiBzdGF0c21vZGVscywgZXZhbCA9IEZ9DQppbXBvcnQgc3RhdHNtb2RlbHMuYXBpIGFzIHNtDQoNCmltcG9ydCBzdGF0c21vZGVscy5mb3JtdWxhLmFwaSBhcyBzbWYNCg0KZGF0YSA9IHNtLmRhdGFzZXRzLmdldF9yZGF0YXNldCgiZGlldG94IiwgImdlZXBhY2siKS5kYXRhDQoNCm1kID0gc21mLm1peGVkbG0oIldlaWdodCB+IFRpbWUiLCBkYXRhLCBncm91cHM9ZGF0YVsiUGlnIl0pDQoNCm1kZiA9IG1kLmZpdCgpDQoNCnByaW50KG1kZi5zdW1tYXJ5KCkpDQpgYGANCg0KIyMjIEFkdmFudGFnZXMNCg0KLSBBbGxvd3Mgb25lIHRvIHN0YXkgaW4gdGhlIFB5dGhvbiB3b3JsZCBpZiBkZXNpcmVkDQotIENsZWFuL2NsZWFyIHByaW50b3V0DQoNCiMjIyBPdGhlcg==</div>
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIk1vcmUgTWl4ZWQgTW9kZWxzIg0Kb3V0cHV0Og0KICBodG1sX2RvY3VtZW50Og0KICAgIGRmX3ByaW50OiBwYWdlZA0KICBodG1sX25vdGVib29rOg0KZWRpdG9yX29wdGlvbnM6DQogIGNodW5rX291dHB1dF90eXBlOiBpbmxpbmUNCi0tLQ0KDQpgYGB7ciBodG1sX3NldHVwLCBpbmNsdWRlPUZBTFNFfQ0Ka25pdHI6Om9wdHNfY2h1bmskc2V0KA0KICBlY2hvPVQsIA0KICBtZXNzYWdlID0gRiwgDQogIHdhcm5pbmcgPSBGLCANCiAgY29tbWVudCA9IE5BLA0KICBSLm9wdGlvbnM9bGlzdCh3aWR0aD0xMjApLCANCiAgY2FjaGUucmVidWlsZD1GLCANCiAgY2FjaGU9VCwNCiAgZmlnLmFsaWduPSdjZW50ZXInLCANCiAgZmlnLmFzcCA9IC43LA0KICBkZXYgPSAnc3ZnJywgDQogIGRldi5hcmdzPWxpc3QoYmcgPSAndHJhbnNwYXJlbnQnKQ0KKQ0KYGBgDQoNCg0KDQojIyBJbnRyb2R1Y3Rpb24NCg0KTWl4ZWQgbW9kZWxzIGFyZSBhbiBleHRyZW1lbHkgdXNlZnVsIG1vZGVsaW5nIHRvb2wgZm9yIHNpdHVhdGlvbnMgaW4gd2hpY2ggdGhlcmUgaXMgc29tZSBkZXBlbmRlbmN5IGFtb25nIG9ic2VydmF0aW9ucyBpbiB0aGUgZGF0YSwgd2hlcmUgdGhlIGNvcnJlbGF0aW9uIHR5cGljYWxseSBhcmlzZXMgZnJvbSB0aGUgb2JzZXJ2YXRpb25zIGJlaW5nIGNsdXN0ZXJlZCBpbiBzb21lIHdheS4gRm9yIGV4YW1wbGUsIGl0IGlzIHF1aXRlIGNvbW1vbiB0byBoYXZlIGRhdGEgaW4gd2hpY2ggd2UgaGF2ZSByZXBlYXRlZCBtZWFzdXJlbWVudHMgZm9yIHRoZSB1bml0cyBvZiBvYnNlcnZhdGlvbiwgb3IgaW4gd2hpY2ggdGhlIHVuaXRzIG9mIG9ic2VydmF0aW9uIGFyZSBvdGhlcndpc2UgZ3JvdXBlZCB0b2dldGhlciAoZS5nLiBzdHVkZW50cyB3aXRoaW4gc2Nob29sLCBjaXRpZXMgd2l0aGluIGdlb2dyYXBoaWMgcmVnaW9uKS4gV2hpbGUgdGhlcmUgYXJlIGRpZmZlcmVudCB3YXlzIHRvIGFwcHJvYWNoIHN1Y2ggYSBzaXR1YXRpb24sIG1peGVkIG1vZGVscyBhcmUgYSB2ZXJ5IGNvbW1vbiBhbmQgcG93ZXJmdWwgdG9vbCB0byBkbyBzby4gSW4gYWRkaXRpb24sIHRoZXkgaGF2ZSB0aWVzIHRvIG90aGVyIHN0YXRpc3RpY2FsIGFwcHJvYWNoZXMgdGhhdCBmdXJ0aGVyIGV4cGFuZCB0aGVpciBhcHBsaWNhYmlsaXR5Lg0KDQpUaGUgZm9sbG93aW5nIGRlcGljdHMgYSBzaW1wbGUgbWl4ZWQgbW9kZWwuICBXZSBoYXZlIG9uZSBwcmVkaWN0b3IgYHhgLCBhbmQgb25lIGdyb3VwaW5nIHZhcmlhYmxlIGFzIGFuIGFkZGl0aW9uYWwgc291cmNlIG9mIHZhcmlhbmNlLg0KDQokJHkgPSBiX3tcbWF0aHJte2ludGVyY2VwdH19ICsgYl97XG1hdGhybXt4fX1cY2RvdCBcbWF0aHNjcnt4fSArIFxtYXRocm17ZWZmZWN0fV97XG1hdGhzY3J7Z3JvdXB9fSArIFxlcHNpbG9uJCQNCg0KJCRcbWF0aHJte2VmZmVjdH1fe1xtYXRocm17Z3JvdXB9fSBcc2ltIFxtYXRoY2Fse059KDAsIFx0YXVeMikkJA0KJCRcZXBzaWxvbiBcc2ltIFxtYXRoY2Fse059KDAsIFxzaWdtYV4yKSQkDQoNClRoZSBhYm92ZSBpcyB0aGUgc2ltcGxlc3QgbW9kZWwgb25lIHdvdWxkIGNvbWUgYWNyb3NzLCBvZnRlbiByZWZlcnJlZCB0byBhcyBhIHJhbmRvbSBpbnRlcmNlcHRzIG1vZGVsLCBhcyB0aGUgZ3JvdXAgZWZmZWN0IGlzIGFkZGVkIHRvIHRoZSBpbnRlcmNlcHQsIGFuZCBvdGhlcndpc2UgaXMgYSBzdGFuZGFyZCBsaW5lYXIgcmVncmVzc2lvbiBtb2RlbC4NCg0KV2UgY2FuIGV4cGFuZCB0aGlzIHRvIGluY2x1ZGUgb3RoZXIgZ3JvdXBpbmcgdmFyaWFibGVzIGZvciByYW5kb20gZWZmZWN0cywgYW5kIGFsbG93IGFueSBvZiB0aGUgY29lZmZpY2llbnRzIHRvIHZhcnkgYW1vbmcgdGhvc2UgZ3JvdXBzLiAgVGhpcyBjb3ZlcnMgYSB3aWRlIHJhbmdlIG9mIG1vZGVsaW5nIHNpdHVhdGlvbnMsIGFuZCBpbiB0aGF0IGNhc2UsIGEgcGFja2FnZSBsaWtlIGBsbWU0YCBpcyBpZGVhbC4gIEl0IGlzIGZhc3QsIGVmZmljaWVudCwgYW5kIG1hbnkgb3RoZXIgcGFja2FnZXMgZXhwYW5kIG9uIGl0Lg0KDQoNCkhvd2V2ZXIsIHRoZXJlIHdpbGwgYmUgdGltZXMgd2hlcmUgeW91ciBkYXRhIGFuZCBtb2RlbCBnbyBiZXlvbmQgdGhlc2Ugc2l0dWF0aW9ucywgYW5kIGlmIHNvLCB0aGVyZSBhcmUgYWRkaXRpb25hbCB0b29scyB0aGF0IGNhbiBhaWQgeW91IGluIHlvdXIgZXhwbG9yYXRpb24uDQoNCg0KIyMgR29hbHMNCg0KLSBEZW1vbnN0cmF0ZSBvdGhlciBwYWNrYWdlcyBhbmQgdGhlaXIgYXBwcm9hY2ggdG8gbWl4ZWQgbW9kZWxzDQotIFByb3ZpZGUgYXdhcmVuZXNzIG9mIG90aGVyIHBvc3NpYmlsaXRpZXMgZm9yIG1peGVkIG1vZGVscw0KDQojIyBQcmVyZXF1aXNpdGVzDQoNCmBgYHtyIHByZWxpbWluYXJpZXN9DQpsaWJyYXJ5KHRpZHl2ZXJzZSkNCiMgZGV2dG9vbHM6Omluc3RhbGxfZ2l0aHViKCdtLWNsYXJrL25vaXJpcycpDQpsaWJyYXJ5KG5vaXJpcykNCmBgYA0KDQoNCiMjIGdsbW1UTUINCg0KIyMjIERlc2NyaXB0aW9uDQoNCj4gRml0IGxpbmVhciBhbmQgZ2VuZXJhbGl6ZWQgbGluZWFyIG1peGVkIG1vZGVscyB3aXRoIHZhcmlvdXMgZXh0ZW5zaW9ucywNCmluY2x1ZGluZyB6ZXJvLWluZmxhdGlvbi4gVGhlIG1vZGVscyBhcmUgZml0dGVkIHVzaW5nIG1heGltdW0gbGlrZWxpaG9vZA0KZXN0aW1hdGlvbiB2aWEgJ1RNQicgKFRlbXBsYXRlIE1vZGVsIEJ1aWxkZXIpLiANCg0KLSBtYWluIGZ1bmN0aW9uOiBgZ2xtbVRNQmANCiAgICANCg0KVGhlIGdsbW1UTUIgcGFja2FnZSB1c2VzIGEgZGlmZmVyZW50IGFwcHJvYWNoIGluIGVzdGltYXRpbmcgbWl4ZWQgbW9kZWxzLCANCiAgICANCiMjIyBFeGFtcGxlcw0KYGBge3IgZ2xtbVRNQn0NCmZpc2gNCmBgYA0KDQoNCiMjIyBBZHZhbnRhZ2VzDQoNCi0gRGV2ZWxvcGVkIGJ5IG9uZSBvZiB0aGUgbG1lNCBhdXRob3JzDQotIE1vcmUgZGlzdHJpYnV0aW9ucw0KLSBIZXRlcm9nZW5lb3VzIHZhcmlhbmNlLCByZXNpZHVhbCBjb3JyZWxhdGlvbg0KLSBNb2RlbCB2YXJpYW5jZQ0KLSBOaWNlbHkgcHJpbnRlZCBvdXRwdXQNCg0KIyMjIE90aGVyDQoNCi0gU3RpbGwgaW4gZGV2ZWxvcG1lbnQgZm9yIHNvbWUgYXJlYXMNCg0KDQojIyBCYXllc2lhbiBBcHByb2FjaGVzDQoNClVzaW5nIGEgQmF5ZXNpYW4gYXBwcm9hY2ggdG8gbWl4ZWQgbW9kZWxzIG1lYW5zIHRoZSBza3kgaXMgdGhlIGxpbWl0IGluIHRlcm1zIG9mIG1vZGVsIGZsZXhpYmlsaXR5Lg0KDQojIyMgRGVzY3JpcHRpb24NCg0KIyMjIyByc3RhbmFybQ0KDQo+IFRoZSByc3RhbmFybSBwYWNrYWdlIGlzIGFuIGFwcGVuZGFnZSB0byB0aGUgcnN0YW4gcGFja2FnZSB0aGF0IGVuYWJsZXMgbWFueSBvZiB0aGUgbW9zdCBjb21tb24gYXBwbGllZCByZWdyZXNzaW9uIG1vZGVscyB0byBiZSBlc3RpbWF0ZWQgdXNpbmcgTWFya292IENoYWluIE1vbnRlIENhcmxvLCB2YXJpYXRpb25hbCBhcHByb3hpbWF0aW9ucyB0byB0aGUgcG9zdGVyaW9yIGRpc3RyaWJ1dGlvbiwgb3Igb3B0aW1pemF0aW9uLiBUaGUgcnN0YW5hcm0gcGFja2FnZSBhbGxvd3MgdGhlc2UgbW9kZWxzIHRvIGJlIHNwZWNpZmllZCB1c2luZyB0aGUgY3VzdG9tYXJ5IFIgbW9kZWxpbmcgc3ludGF4Lg0KDQotIG1haW4gZnVuY3Rpb246IGBzdGFuXypgDQoNCiMjIyMgYnJtcw0KPiBUaGUgYGJybXNgIHBhY2thZ2UgcHJvdmlkZXMgYW4gaW50ZXJmYWNlIHRvIGZpdCBCYXllc2lhbiBnZW5lcmFsaXplZCBtdWx0aXZhcmlhdGUgKG5vbi0pbGluZWFyIG11bHRpbGV2ZWwgbW9kZWxzIHVzaW5nIGBTdGFuYCwgd2hpY2ggaXMgYSBDKysgcGFja2FnZSBmb3Igb2J0YWluaW5nIGZ1bGwgQmF5ZXNpYW4gaW5mZXJlbmNlIChzZWUgaHR0cDovL21jLXN0YW4ub3JnLykuIFRoZSBmb3JtdWxhIHN5bnRheCBpcyBhbiBleHRlbmRlZCB2ZXJzaW9uIG9mIHRoZSBzeW50YXggYXBwbGllZCBpbiB0aGUgbG1lNCBwYWNrYWdlIHRvIHByb3ZpZGUgYSBmYW1pbGlhciBhbmQgc2ltcGxlIGludGVyZmFjZSBmb3IgcGVyZm9ybWluZyByZWdyZXNzaW9uIGFuYWx5c2VzLg0KDQotIG1haW4gZnVuY3Rpb246IGBicm1gDQoNCiMjIyBFeGFtcGxlcw0KDQpgYGB7ciBicm1zfQ0KbGlicmFyeShicm1zKQ0KYGBgDQoNCg0KDQoNCiMjIyBBZHZhbnRhZ2VzDQoNCiMjIyMgcnN0YW5hcm0NCg0KLSBzYW1lIGxtZTQgc3ludGF4DQotIHNhbWUgbG1lNCBmdW5jdGlvbiBuYW1lcw0KLSBubyBjb21waWxhdGlvbiB0aW1lDQoNCiMjIyMgYnJtcw0KDQotIHNhbWUgbG1lNCBzeW50YXgNCi0gaGV0ZXJvZ2Vub3VzIHZhcmlhbmNlcw0KLSBhdXRvY29ycmVsYXRpb24NCi0gbW9yZSBkaXN0cmlidXRpb25zDQotIGhldGVyb2dlbmVvdXMgdmFyaWFuY2UgY29tcG9uZW50cw0KLSBtdWx0aXZhcmlhdGUgbW9kZWxzIHdpdGggY29ycmVsYXRlZCByYW5kb20gZWZmZWN0cw0KLSBtdWx0aW1lbWJlcnNoaXAgbW9kZWxzDQotIHBoeWxvZ2VuZXRpYyBzdHJ1Y3R1cmVzDQotIG1pc3NpbmcgZGF0YSBpbXB1dGF0aW9uDQotIGluZGlyZWN0IGVmZmVjdHMNCg0KIyMjIE90aGVyDQoNCi0gQmF5ZXNpYW4gdGVjaG5pcXVlcyBhcmUgc2xvd2VyIGR1ZSB0byB0aGUgd2F5IHRoZXkgYXJlIGVzdGltYXRlZCwgYnV0IGZvciBtYW55IHNpdHVhdGlvbnMgbm90IHByb2hpYml0aXZlbHkgc28NCg0KDQojIyBtZ2N2DQojIyMjIERlc2NyaXB0aW9uDQojIyMjIEV4YW1wbGVzDQoNCj4gYG1nY3ZgIHByb3ZpZGVzIGZ1bmN0aW9ucyBmb3IgZ2VuZXJhbGl6ZWQgYWRkaXRpdmUgbW9kZWxsaW5nIChgZ2FtYCBhbmQgYGJhbWApIGFuZCBnZW5lcmFsaXplZCBhZGRpdGl2ZSBtaXhlZCBtb2RlbGxpbmcgKGBnYW1tYCwgYW5kIGByYW5kb20uZWZmZWN0c2ApLiBUaGUgdGVybSBHQU0gaXMgdGFrZW4gdG8gaW5jbHVkZSBhbnkgbW9kZWwgZGVwZW5kZW50IG9uIHVua25vd24gc21vb3RoIGZ1bmN0aW9ucyBvZiBwcmVkaWN0b3JzIGFuZCBlc3RpbWF0ZWQgYnkgcXVhZHJhdGljYWxseSBwZW5hbGl6ZWQgKHBvc3NpYmx5IHF1YXNpLSkgbGlrZWxpaG9vZCBtYXhpbWl6YXRpb24uIEF2YWlsYWJsZSBkaXN0cmlidXRpb25zIGFyZSBjb3ZlcmVkIGluIGBmYW1pbHkubWdjdmAgYW5kIGF2YWlsYWJsZSBzbW9vdGhzIGluIGBzbW9vdGgudGVybXMuYA0KDQotIG1haW4gZnVuY3Rpb246IGBnYW1gIChhbHNvIGBiYW1gKQ0KDQoNCiMjIyBBZHZhbnRhZ2VzDQoNCi0gYWRkaXRpb24gb2Ygc21vb3RoIHRlcm1zDQotIHNwYXRpYWwgcmFuZG9tIGVmZmVjdHMNCi0gYXV0b2NvcnJlbGF0aW9uDQotIG1vcmUgZGlzdHJpYnV0aW9ucw0KLSBjYW4gdXNlIGxtZTQgb3IgbmxtZSBpbiBjb25qdW5jdGlvbg0KLSBzZWVtcyB0byB3b3JrIGJldHRlciBmb3IgZ2xtDQotIG11Y2ggYmV0dGVyIGZvciB2ZXJ5IGxhcmdlIGRhdGEgZ2xtDQoNCiMjIyBPdGhlcg0KDQpUaGUgbWdjdiBwYWNrYWdlIGlzIG9uZSBvZiB0aGUgbW9zdCBwb3dlcmZ1bCBtb2RlbGluZyB0b29scyBpbiB0aGUgUiB3b3JsZCBpbiBteSBvcGluaW9uLiAgSXQgY2FuIGJlIHVzZWQganVzdCBmb3Igc3RhbmRhcmQgbWl4ZWQgbW9kZWxzIGlmIGRlc2lyZWQuICBJdCB3aWxsIGJlIHNsb3dlciB0aGFuIGxtZTQgZm9yIHN0YW5kYXJkIGxpbmVhciBtaXhlZCBtb2RlbHMsIGJ1dCBub3QgcHJvaGliaXRpdmVseSBzbywgZXNwZWNpYWxseSBpZiB5b3UgdXNlIGJhbS4gIElmIHlvdSBnbyBiZXlvbmQgc3VjaCBtb2RlbHMsIEkndmUgZm91bmQgaXQgdG8gYmUgZmFyIGZhc3RlciB0aGFuIGxtZTQgZm9yIHZlcnkgbGFyZ2UgZ2xtbS4NCg0KIyMgUHl0aG9uIFN0YXRzbW9kZWxzDQoNCklmIHlvdSBoYXBwZW4gdG8gYmUgdXNpbmcgUHl0aG9uLCB5b3UgZG9uJ3QgaGF2ZSB0byBzd2l0Y2ggdG8gYW5vdGhlciB0b29sIHRvIGRvIG1peGVkIG1vZGVscy4NCg0KIyMjIyBEZXNjcmlwdGlvbg0KIyMjIyBFeGFtcGxlcw0KDQpgYGB7cHl0aG9uIHN0YXRzbW9kZWxzLCBldmFsID0gRn0NCmltcG9ydCBzdGF0c21vZGVscy5hcGkgYXMgc20NCg0KaW1wb3J0IHN0YXRzbW9kZWxzLmZvcm11bGEuYXBpIGFzIHNtZg0KDQpkYXRhID0gc20uZGF0YXNldHMuZ2V0X3JkYXRhc2V0KCJkaWV0b3giLCAiZ2VlcGFjayIpLmRhdGENCg0KbWQgPSBzbWYubWl4ZWRsbSgiV2VpZ2h0IH4gVGltZSIsIGRhdGEsIGdyb3Vwcz1kYXRhWyJQaWciXSkNCg0KbWRmID0gbWQuZml0KCkNCg0KcHJpbnQobWRmLnN1bW1hcnkoKSkNCmBgYA0KDQojIyMgQWR2YW50YWdlcw0KDQotIEFsbG93cyBvbmUgdG8gc3RheSBpbiB0aGUgUHl0aG9uIHdvcmxkIGlmIGRlc2lyZWQNCi0gQ2xlYW4vY2xlYXIgcHJpbnRvdXQNCg0KIyMjIE90aGVy</div>
 
 
 

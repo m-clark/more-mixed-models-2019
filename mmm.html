@@ -1652,19 +1652,40 @@ $(document).ready(function () {
 <pre class="r"><code>library(tidyverse)
 # devtools::install_github(&#39;m-clark/noiris&#39;)
 library(noiris)</code></pre>
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>Mixed models are an extremely useful modeling tool for situations in which there is some dependency among observations in the data, where the correlation typically arises from the observations being clustered in some way. For example, it is quite common to have data in which we have repeated measurements for the units of observation, or in which the units of observation are otherwise grouped together (e.g. students within school, cities within geographic region). While there are different ways to approach such a situation, mixed models are a very common and powerful tool to do so. In addition, they have ties to other statistical approaches that further expand their applicability.</p>
+<p>The following depicts a simple mixed model. We have one predictor <code>x</code>, and one grouping variable as a source of variance.</p>
+<p><span class="math display">\[y = b_{\mathrm{intercept}} + b_{\mathrm{x}}\cdot \mathscr{x} + \mathrm{effect}_{\mathscr{group}} + \epsilon\]</span></p>
+<p><span class="math display">\[\mathrm{effect}_{\mathrm{group}} \sim \mathcal{N}(0, \tau^2)\]</span> <span class="math display">\[\epsilon \sim \mathcal{N}(0, \sigma^2)\]</span></p>
+<p>The above is the simplest model one would come across, often referred to as a random intercepts model, as the group effect is added to the intercept, and otherwise is a standard linear regression model.</p>
+</div>
+<div id="goals" class="section level2">
+<h2>Goals</h2>
+<ul>
+<li>Demonstrate other packages and their approach to mixed models</li>
+<li>Provide awareness of other possibilities for mixed models</li>
+</ul>
+</div>
 <div id="glmmtmb" class="section level2">
 <h2>glmmTMB</h2>
+<div id="description" class="section level3">
+<h3>Description</h3>
 <blockquote>
 <p>Fit linear and generalized linear mixed models with various extensions, including zero-inflation. The models are fitted using maximum likelihood estimation via ‘TMB’ (Template Model Builder). Random effects are assumed to be Gaussian on the scale of the linear predictor and are integrated out using the Laplace approximation. Gradients are calculated using automatic differentiation.</p>
 </blockquote>
 <ul>
 <li>main function: <code>glmmTMB</code></li>
 </ul>
+</div>
+<div id="examples" class="section level3">
+<h3>Examples</h3>
 <pre class="r"><code>fish</code></pre>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
 {"columns":[{"label":["nofish"],"name":[1],"type":["fctr"],"align":["left"]},{"label":["livebait"],"name":[2],"type":["fctr"],"align":["left"]},{"label":["camper"],"name":[3],"type":["fctr"],"align":["left"]},{"label":["persons"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["child"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["count"],"name":[6],"type":["dbl"],"align":["right"]}],"data":[{"1":"yes","2":"no","3":"no","4":"1","5":"0","6":"0"},{"1":"no","2":"yes","3":"yes","4":"1","5":"0","6":"0"},{"1":"no","2":"yes","3":"no","4":"1","5":"0","6":"0"},{"1":"no","2":"yes","3":"yes","4":"2","5":"1","6":"0"},{"1":"no","2":"yes","3":"no","4":"1","5":"0","6":"1"},{"1":"no","2":"yes","3":"yes","4":"4","5":"2","6":"0"},{"1":"no","2":"yes","3":"no","4":"3","5":"1","6":"0"},{"1":"no","2":"yes","3":"no","4":"4","5":"3","6":"0"},{"1":"yes","2":"no","3":"yes","4":"3","5":"2","6":"0"},{"1":"no","2":"yes","3":"yes","4":"1","5":"0","6":"1"},{"1":"no","2":"yes","3":"no","4":"4","5":"1","6":"0"},{"1":"no","2":"yes","3":"yes","4":"3","5":"2","6":"0"},{"1":"yes","2":"no","3":"no","4":"3","5":"0","6":"1"},{"1":"no","2":"yes","3":"no","4":"3","5":"0","6":"2"},{"1":"no","2":"yes","3":"yes","4":"1","5":"0","6":"0"},{"1":"yes","2":"yes","3":"yes","4":"1","5":"0","6":"1"},{"1":"no","2":"yes","3":"no","4":"4","5":"1","6":"0"},{"1":"yes","2":"yes","3":"yes","4":"3","5":"2","6":"0"},{"1":"no","2":"yes","3":"yes","4":"2","5":"1","6":"1"},{"1":"no","2":"yes","3":"no","4":"3","5":"1","6":"0"},{"1":"no","2":"yes","3":"no","4":"4","5":"1","6":"1"},{"1":"no","2":"yes","3":"yes","4":"4","5":"0","6":"5"},{"1":"no","2":"yes","3":"yes","4":"2","5":"1","6":"0"},{"1":"no","2":"yes","3":"yes","4":"2","5":"0","6":"3"},{"1":"no","2":"yes","3":"yes","4":"3","5":"0","6":"30"},{"1":"no","2":"yes","3":"yes","4":"2","5":"0","6":"0"},{"1":"no","2":"yes","3":"yes","4":"4","5":"0","6":"13"},{"1":"no","2":"yes","3":"no","4":"2","5":"1","6":"0"},{"1":"no","2":"yes","3":"no","4":"1","5":"0","6":"0"},{"1":"no","2":"yes","3":"no","4":"4","5":"3","6":"0"},{"1":"no","2":"yes","3":"no","4":"1","5":"0","6":"0"},{"1":"no","2":"yes","3":"yes","4":"3","5":"1","6":"0"},{"1":"no","2":"yes","3":"yes","4":"4","5":"0","6":"11"},{"1":"no","2":"yes","3":"yes","4":"4","5":"1","6":"5"},{"1":"no","2":"yes","3":"yes","4":"1","5":"0","6":"0"},{"1":"yes","2":"no","3":"no","4":"2","5":"0","6":"1"},{"1":"yes","2":"yes","3":"yes","4":"2","5":"1","6":"1"},{"1":"yes","2":"yes","3":"yes","4":"4","5":"1","6":"7"},{"1":"yes","2":"yes","3":"yes","4":"3","5":"1","6":"0"},{"1":"no","2":"yes","3":"yes","4":"4","5":"1","6":"14"},{"1":"no","2":"yes","3":"yes","4":"1","5":"0","6":"0"},{"1":"no","2":"yes","3":"yes","4":"4","5":"0","6":"32"},{"1":"yes","2":"no","3":"no","4":"3","5":"2","6":"0"},{"1":"yes","2":"no","3":"yes","4":"4","5":"0","6":"1"},{"1":"yes","2":"yes","3":"no","4":"4","5":"2","6":"0"},{"1":"no","2":"yes","3":"yes","4":"1","5":"0","6":"0"},{"1":"no","2":"yes","3":"yes","4":"2","5":"1","6":"0"},{"1":"no","2":"yes","3":"no","4":"1","5":"0","6":"1"},{"1":"no","2":"yes","3":"yes","4":"2","5":"1","6":"5"},{"1":"no","2":"yes","3":"no","4":"2","5":"1","6":"0"},{"1":"no","2":"yes","3":"yes","4":"2","5":"1","6":"1"},{"1":"no","2":"yes","3":"yes","4":"2","5":"1","6":"0"},{"1":"no","2":"yes","3":"yes","4":"4","5":"0","6":"22"},{"1":"yes","2":"no","3":"no","4":"2","5":"0","6":"0"},{"1":"no","2":"yes","3":"yes","4":"3","5":"0","6":"15"},{"1":"yes","2":"no","3":"yes","4":"1","5":"0","6":"0"},{"1":"no","2":"yes","3":"yes","4":"1","5":"0","6":"0"},{"1":"no","2":"yes","3":"yes","4":"1","5":"0","6":"0"},{"1":"yes","2":"yes","3":"yes","4":"4","5":"1","6":"5"},{"1":"yes","2":"yes","3":"yes","4":"1","5":"0","6":"4"},{"1":"no","2":"yes","3":"no","4":"2","5":"0","6":"2"},{"1":"no","2":"yes","3":"yes","4":"2","5":"1","6":"0"},{"1":"no","2":"yes","3":"no","4":"2","5":"1","6":"2"},{"1":"no","2":"yes","3":"yes","4":"4","5":"0","6":"32"},{"1":"no","2":"yes","3":"no","4":"4","5":"3","6":"0"},{"1":"no","2":"yes","3":"yes","4":"1","5":"0","6":"0"},{"1":"no","2":"yes","3":"no","4":"1","5":"0","6":"1"},{"1":"yes","2":"yes","3":"no","4":"3","5":"2","6":"0"},{"1":"yes","2":"yes","3":"yes","4":"1","5":"0","6":"0"},{"1":"no","2":"yes","3":"yes","4":"2","5":"1","6":"0"},{"1":"no","2":"yes","3":"yes","4":"3","5":"0","6":"7"},{"1":"no","2":"yes","3":"no","4":"4","5":"3","6":"0"},{"1":"yes","2":"no","3":"no","4":"4","5":"2","6":"0"},{"1":"no","2":"yes","3":"yes","4":"3","5":"2","6":"0"},{"1":"yes","2":"no","3":"yes","4":"1","5":"0","6":"0"},{"1":"no","2":"yes","3":"no","4":"2","5":"0","6":"0"},{"1":"no","2":"yes","3":"no","4":"3","5":"2","6":"0"},{"1":"yes","2":"yes","3":"yes","4":"1","5":"0","6":"0"},{"1":"no","2":"yes","3":"no","4":"2","5":"1","6":"0"},{"1":"no","2":"yes","3":"no","4":"4","5":"0","6":"2"},{"1":"no","2":"yes","3":"yes","4":"4","5":"1","6":"3"},{"1":"yes","2":"yes","3":"no","4":"2","5":"1","6":"1"},{"1":"no","2":"yes","3":"yes","4":"3","5":"0","6":"5"},{"1":"no","2":"yes","3":"no","4":"1","5":"0","6":"0"},{"1":"no","2":"yes","3":"yes","4":"1","5":"0","6":"2"},{"1":"yes","2":"no","3":"no","4":"3","5":"1","6":"1"},{"1":"yes","2":"no","3":"no","4":"4","5":"1","6":"0"},{"1":"yes","2":"yes","3":"yes","4":"1","5":"0","6":"1"},{"1":"no","2":"yes","3":"yes","4":"4","5":"0","6":"149"},{"1":"no","2":"yes","3":"yes","4":"3","5":"2","6":"0"},{"1":"no","2":"yes","3":"yes","4":"3","5":"1","6":"1"},{"1":"no","2":"yes","3":"no","4":"2","5":"0","6":"0"},{"1":"no","2":"yes","3":"yes","4":"3","5":"0","6":"0"},{"1":"no","2":"yes","3":"no","4":"2","5":"1","6":"1"},{"1":"no","2":"yes","3":"no","4":"4","5":"2","6":"0"},{"1":"no","2":"yes","3":"yes","4":"3","5":"1","6":"0"},{"1":"no","2":"yes","3":"no","4":"4","5":"2","6":"0"},{"1":"yes","2":"no","3":"no","4":"4","5":"0","6":"2"},{"1":"no","2":"yes","3":"yes","4":"2","5":"0","6":"2"},{"1":"no","2":"yes","3":"no","4":"4","5":"0","6":"29"},{"1":"no","2":"yes","3":"yes","4":"1","5":"0","6":"3"},{"1":"yes","2":"no","3":"yes","4":"2","5":"0","6":"0"},{"1":"no","2":"yes","3":"no","4":"4","5":"2","6":"0"},{"1":"yes","2":"no","3":"no","4":"3","5":"0","6":"5"},{"1":"no","2":"yes","3":"yes","4":"2","5":"0","6":"0"},{"1":"no","2":"yes","3":"no","4":"4","5":"1","6":"0"},{"1":"no","2":"yes","3":"yes","4":"1","5":"0","6":"0"},{"1":"no","2":"yes","3":"no","4":"3","5":"1","6":"0"},{"1":"no","2":"yes","3":"yes","4":"4","5":"1","6":"0"},{"1":"no","2":"yes","3":"yes","4":"4","5":"1","6":"1"},{"1":"no","2":"yes","3":"yes","4":"1","5":"0","6":"7"},{"1":"no","2":"yes","3":"yes","4":"2","5":"0","6":"1"},{"1":"no","2":"yes","3":"no","4":"1","5":"0","6":"0"},{"1":"yes","2":"no","3":"no","4":"4","5":"1","6":"2"},{"1":"no","2":"yes","3":"no","4":"3","5":"2","6":"0"},{"1":"yes","2":"yes","3":"no","4":"2","5":"0","6":"2"},{"1":"no","2":"yes","3":"no","4":"2","5":"1","6":"0"},{"1":"no","2":"yes","3":"no","4":"4","5":"1","6":"0"},{"1":"yes","2":"no","3":"yes","4":"3","5":"1","6":"0"},{"1":"yes","2":"yes","3":"yes","4":"3","5":"2","6":"1"},{"1":"no","2":"yes","3":"no","4":"2","5":"1","6":"0"},{"1":"yes","2":"yes","3":"no","4":"1","5":"0","6":"0"},{"1":"yes","2":"no","3":"yes","4":"4","5":"3","6":"0"},{"1":"no","2":"yes","3":"no","4":"1","5":"0","6":"0"},{"1":"yes","2":"no","3":"yes","4":"4","5":"3","6":"0"},{"1":"no","2":"yes","3":"no","4":"4","5":"1","6":"3"},{"1":"no","2":"yes","3":"yes","4":"1","5":"0","6":"4"},{"1":"no","2":"yes","3":"yes","4":"3","5":"0","6":"3"},{"1":"no","2":"yes","3":"no","4":"2","5":"0","6":"3"},{"1":"no","2":"yes","3":"yes","4":"4","5":"0","6":"8"},{"1":"yes","2":"no","3":"yes","4":"3","5":"0","6":"2"},{"1":"yes","2":"yes","3":"yes","4":"1","5":"0","6":"1"},{"1":"no","2":"yes","3":"no","4":"4","5":"0","6":"6"},{"1":"yes","2":"yes","3":"yes","4":"4","5":"2","6":"0"},{"1":"no","2":"yes","3":"yes","4":"2","5":"1","6":"0"},{"1":"yes","2":"yes","3":"no","4":"4","5":"0","6":"5"},{"1":"no","2":"yes","3":"yes","4":"4","5":"1","6":"3"},{"1":"no","2":"yes","3":"no","4":"3","5":"1","6":"31"},{"1":"no","2":"yes","3":"yes","4":"2","5":"1","6":"0"},{"1":"no","2":"yes","3":"no","4":"2","5":"0","6":"2"},{"1":"yes","2":"yes","3":"yes","4":"4","5":"3","6":"0"},{"1":"no","2":"yes","3":"yes","4":"2","5":"1","6":"0"},{"1":"yes","2":"no","3":"no","4":"3","5":"0","6":"0"},{"1":"no","2":"yes","3":"yes","4":"3","5":"1","6":"0"},{"1":"yes","2":"yes","3":"no","4":"1","5":"0","6":"0"},{"1":"no","2":"yes","3":"no","4":"2","5":"0","6":"0"},{"1":"yes","2":"yes","3":"yes","4":"4","5":"0","6":"6"},{"1":"no","2":"yes","3":"no","4":"3","5":"0","6":"9"},{"1":"yes","2":"no","3":"yes","4":"3","5":"2","6":"0"},{"1":"yes","2":"no","3":"yes","4":"2","5":"1","6":"0"},{"1":"no","2":"yes","3":"yes","4":"1","5":"0","6":"0"},{"1":"no","2":"yes","3":"yes","4":"2","5":"1","6":"0"},{"1":"no","2":"yes","3":"no","4":"1","5":"0","6":"0"},{"1":"no","2":"yes","3":"no","4":"2","5":"0","6":"2"},{"1":"no","2":"yes","3":"no","4":"3","5":"0","6":"15"},{"1":"no","2":"yes","3":"yes","4":"1","5":"0","6":"1"},{"1":"yes","2":"yes","3":"yes","4":"2","5":"0","6":"2"},{"1":"no","2":"yes","3":"yes","4":"3","5":"1","6":"3"},{"1":"yes","2":"yes","3":"yes","4":"1","5":"0","6":"0"},{"1":"no","2":"yes","3":"yes","4":"4","5":"0","6":"65"},{"1":"no","2":"yes","3":"yes","4":"3","5":"0","6":"5"},{"1":"no","2":"yes","3":"no","4":"1","5":"0","6":"0"},{"1":"yes","2":"yes","3":"yes","4":"3","5":"2","6":"0"},{"1":"no","2":"yes","3":"no","4":"4","5":"1","6":"0"},{"1":"no","2":"yes","3":"no","4":"4","5":"2","6":"0"},{"1":"yes","2":"yes","3":"no","4":"1","5":"0","6":"1"},{"1":"no","2":"yes","3":"yes","4":"4","5":"1","6":"8"},{"1":"no","2":"yes","3":"yes","4":"3","5":"0","6":"0"},{"1":"no","2":"yes","3":"yes","4":"3","5":"2","6":"0"},{"1":"no","2":"yes","3":"yes","4":"4","5":"3","6":"0"},{"1":"no","2":"yes","3":"yes","4":"3","5":"0","6":"2"},{"1":"no","2":"yes","3":"yes","4":"2","5":"1","6":"4"},{"1":"yes","2":"yes","3":"no","4":"4","5":"0","6":"5"},{"1":"no","2":"yes","3":"no","4":"2","5":"0","6":"9"},{"1":"no","2":"yes","3":"no","4":"4","5":"2","6":"0"},{"1":"no","2":"yes","3":"no","4":"2","5":"0","6":"0"},{"1":"no","2":"yes","3":"yes","4":"2","5":"0","6":"0"},{"1":"no","2":"yes","3":"no","4":"1","5":"0","6":"0"},{"1":"yes","2":"yes","3":"yes","4":"2","5":"0","6":"21"},{"1":"no","2":"yes","3":"no","4":"1","5":"0","6":"0"},{"1":"no","2":"yes","3":"yes","4":"3","5":"0","6":"6"},{"1":"no","2":"yes","3":"no","4":"2","5":"1","6":"0"},{"1":"yes","2":"no","3":"yes","4":"2","5":"0","6":"0"},{"1":"no","2":"yes","3":"yes","4":"2","5":"1","6":"0"},{"1":"yes","2":"yes","3":"no","4":"3","5":"1","6":"0"},{"1":"no","2":"yes","3":"yes","4":"4","5":"1","6":"16"},{"1":"yes","2":"no","3":"no","4":"3","5":"2","6":"0"},{"1":"no","2":"yes","3":"yes","4":"3","5":"2","6":"0"},{"1":"yes","2":"yes","3":"yes","4":"4","5":"0","6":"4"},{"1":"no","2":"yes","3":"yes","4":"2","5":"1","6":"2"},{"1":"no","2":"yes","3":"yes","4":"3","5":"0","6":"10"},{"1":"yes","2":"no","3":"yes","4":"1","5":"0","6":"0"},{"1":"no","2":"yes","3":"yes","4":"1","5":"0","6":"0"},{"1":"yes","2":"no","3":"no","4":"1","5":"0","6":"0"},{"1":"yes","2":"no","3":"yes","4":"2","5":"0","6":"2"},{"1":"yes","2":"yes","3":"yes","4":"2","5":"0","6":"1"},{"1":"no","2":"yes","3":"no","4":"1","5":"0","6":"3"},{"1":"no","2":"yes","3":"yes","4":"3","5":"1","6":"0"},{"1":"no","2":"yes","3":"yes","4":"4","5":"2","6":"0"},{"1":"no","2":"yes","3":"yes","4":"2","5":"0","6":"21"},{"1":"no","2":"yes","3":"no","4":"2","5":"1","6":"0"},{"1":"no","2":"yes","3":"no","4":"2","5":"0","6":"0"},{"1":"yes","2":"no","3":"yes","4":"1","5":"0","6":"2"},{"1":"yes","2":"no","3":"yes","4":"2","5":"1","6":"0"},{"1":"no","2":"yes","3":"yes","4":"4","5":"1","6":"3"},{"1":"no","2":"yes","3":"yes","4":"3","5":"1","6":"0"},{"1":"no","2":"yes","3":"yes","4":"4","5":"0","6":"38"},{"1":"yes","2":"yes","3":"yes","4":"4","5":"3","6":"0"},{"1":"no","2":"yes","3":"yes","4":"1","5":"0","6":"0"},{"1":"no","2":"yes","3":"no","4":"1","5":"0","6":"0"},{"1":"no","2":"yes","3":"yes","4":"1","5":"0","6":"1"},{"1":"no","2":"yes","3":"no","4":"1","5":"0","6":"3"},{"1":"no","2":"yes","3":"yes","4":"1","5":"0","6":"0"},{"1":"no","2":"yes","3":"no","4":"2","5":"0","6":"1"},{"1":"yes","2":"yes","3":"no","4":"4","5":"2","6":"0"},{"1":"yes","2":"no","3":"no","4":"2","5":"1","6":"0"},{"1":"no","2":"yes","3":"no","4":"4","5":"2","6":"0"},{"1":"no","2":"yes","3":"no","4":"3","5":"1","6":"0"},{"1":"no","2":"yes","3":"yes","4":"4","5":"2","6":"5"},{"1":"no","2":"yes","3":"no","4":"4","5":"2","6":"0"},{"1":"yes","2":"no","3":"no","4":"4","5":"1","6":"0"},{"1":"no","2":"yes","3":"no","4":"3","5":"0","6":"2"},{"1":"yes","2":"yes","3":"yes","4":"2","5":"1","6":"0"},{"1":"no","2":"yes","3":"yes","4":"1","5":"0","6":"0"},{"1":"no","2":"yes","3":"no","4":"2","5":"1","6":"0"},{"1":"no","2":"yes","3":"yes","4":"2","5":"0","6":"1"},{"1":"yes","2":"yes","3":"yes","4":"3","5":"1","6":"4"},{"1":"yes","2":"yes","3":"no","4":"1","5":"0","6":"0"},{"1":"no","2":"yes","3":"yes","4":"3","5":"2","6":"0"},{"1":"no","2":"yes","3":"yes","4":"2","5":"1","6":"2"},{"1":"no","2":"yes","3":"yes","4":"1","5":"0","6":"3"},{"1":"yes","2":"yes","3":"no","4":"4","5":"2","6":"0"},{"1":"no","2":"yes","3":"no","4":"3","5":"1","6":"0"},{"1":"no","2":"yes","3":"no","4":"2","5":"0","6":"0"},{"1":"yes","2":"no","3":"no","4":"2","5":"0","6":"0"},{"1":"no","2":"yes","3":"yes","4":"1","5":"0","6":"1"},{"1":"no","2":"yes","3":"yes","4":"2","5":"0","6":"2"},{"1":"no","2":"yes","3":"yes","4":"1","5":"0","6":"0"},{"1":"no","2":"yes","3":"yes","4":"3","5":"0","6":"6"},{"1":"no","2":"yes","3":"yes","4":"2","5":"0","6":"4"},{"1":"no","2":"yes","3":"yes","4":"2","5":"0","6":"1"},{"1":"no","2":"yes","3":"yes","4":"4","5":"2","6":"1"},{"1":"yes","2":"no","3":"no","4":"2","5":"0","6":"0"},{"1":"no","2":"yes","3":"yes","4":"3","5":"1","6":"1"},{"1":"no","2":"yes","3":"no","4":"3","5":"0","6":"0"},{"1":"yes","2":"yes","3":"yes","4":"2","5":"0","6":"0"},{"1":"no","2":"yes","3":"yes","4":"4","5":"3","6":"0"},{"1":"no","2":"yes","3":"yes","4":"2","5":"1","6":"0"},{"1":"yes","2":"yes","3":"yes","4":"3","5":"2","6":"0"},{"1":"yes","2":"yes","3":"yes","4":"2","5":"1","6":"0"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
+</div>
 </div>
 <div id="advantages" class="section level3">
 <h3>Advantages</h3>
@@ -1685,8 +1706,10 @@ library(noiris)</code></pre>
 </div>
 <div id="bayesian-approaches" class="section level2">
 <h2>Bayesian Approaches</h2>
-<div id="rstanarm" class="section level3">
-<h3>rstanarm</h3>
+<div id="description-1" class="section level3">
+<h3>Description</h3>
+<div id="rstanarm" class="section level4">
+<h4>rstanarm</h4>
 <blockquote>
 <p>The rstanarm package is an appendage to the rstan package that enables many of the most common applied regression models to be estimated using Markov Chain Monte Carlo, variational approximations to the posterior distribution, or optimization. The rstanarm package allows these models to be specified using the customary R modeling syntax.</p>
 </blockquote>
@@ -1694,14 +1717,19 @@ library(noiris)</code></pre>
 <li>main function: <code>stan_*</code></li>
 </ul>
 </div>
-<div id="brms" class="section level3">
-<h3>brms</h3>
+<div id="brms" class="section level4">
+<h4>brms</h4>
 <blockquote>
 <p>The <code>brms</code> package provides an interface to fit Bayesian generalized multivariate (non-)linear multilevel models using <code>Stan</code>, which is a C++ package for obtaining full Bayesian inference (see <a href="http://mc-stan.org/" class="uri">http://mc-stan.org/</a>). The formula syntax is an extended version of the syntax applied in the lme4 package to provide a familiar and simple interface for performing regression analyses.</p>
 </blockquote>
 <ul>
 <li>main function: <code>brm</code></li>
 </ul>
+</div>
+</div>
+<div id="examples-1" class="section level3">
+<h3>Examples</h3>
+<pre class="r"><code>library(brms)</code></pre>
 </div>
 <div id="advantages-1" class="section level3">
 <h3>Advantages</h3>
@@ -1738,21 +1766,43 @@ library(noiris)</code></pre>
 </div>
 <div id="mgcv" class="section level2">
 <h2>mgcv</h2>
+<div id="description-2" class="section level4">
+<h4>Description</h4>
+</div>
+<div id="examples-2" class="section level4">
+<h4>Examples</h4>
 <blockquote>
 <p><code>mgcv</code> provides functions for generalized additive modelling (<code>gam</code> and <code>bam</code>) and generalized additive mixed modelling (<code>gamm</code>, and <code>random.effects</code>). The term GAM is taken to include any model dependent on unknown smooth functions of predictors and estimated by quadratically penalized (possibly quasi-) likelihood maximization. Available distributions are covered in <code>family.mgcv</code> and available smooths in <code>smooth.terms.</code></p>
 </blockquote>
 <ul>
 <li>main function: <code>gam</code> (also <code>bam</code>)</li>
 </ul>
+</div>
 <div id="advantages-2" class="section level3">
 <h3>Advantages</h3>
+<ul>
+<li>addition of smooth terms</li>
+<li>spatial random effects</li>
+<li>autocorrelation</li>
+<li>more distributions</li>
+<li>can use lme4 or nlme in conjunction</li>
+<li>seems to work better for glm</li>
+<li>much better for very large data glm</li>
+</ul>
 </div>
 <div id="other-2" class="section level3">
 <h3>Other</h3>
+<p>The mgcv package is one of the most powerful modeling tools in the R world in my opinion. It can be used just for standard mixed models if desired. It will be slower than lme4 for standard linear mixed models, but not prohibitively so, especially if you use bam. If you go beyond such models, I’ve found it to be far faster than lme4 for very large glmm.</p>
 </div>
 </div>
 <div id="python-statsmodels" class="section level2">
 <h2>Python Statsmodels</h2>
+<p>If you happen to be using Python, you don’t have to switch to another tool to do mixed models.</p>
+<div id="description-3" class="section level4">
+<h4>Description</h4>
+</div>
+<div id="examples-3" class="section level4">
+<h4>Examples</h4>
 <pre class="python"><code>import statsmodels.api as sm
 
 import statsmodels.formula.api as smf
@@ -1764,6 +1814,7 @@ md = smf.mixedlm(&quot;Weight ~ Time&quot;, data, groups=data[&quot;Pig&quot;])
 mdf = md.fit()
 
 print(mdf.summary())</code></pre>
+</div>
 <div id="advantages-3" class="section level3">
 <h3>Advantages</h3>
 <ul>
