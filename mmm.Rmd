@@ -5,7 +5,7 @@ output:
     df_print: paged
   html_notebook:
 editor_options:
-  chunk_output_type: inline
+  chunk_output_type: console
 ---
 
 ```{r html_setup, include=FALSE}
@@ -70,11 +70,53 @@ estimation via 'TMB' (Template Model Builder).
 - main function: `glmmTMB`
     
 
-The glmmTMB package uses a different approach in estimating mixed models, 
+The glmmTMB package uses a different approach in estimating mixed models, which may be reason enough to use for some problems where `lme4` might struggle.  In general though, it tackles various other kinds of mixed models that `lme4` is not designed to.
     
 ### Examples
-```{r glmmTMB}
-fish
+
+We can start with an example for zero-inflated models.  These are primarily count distribution models with an added component to deal with excess zeros.  
+
+- **site**: name of a location where repeated samples were taken
+
+- **mined**: factor indicating whether the site was affected by mountain top removal coal mining
+
+- **spp**: abbreviated species name, possibly also life stage
+
+```{r fish}
+library(glmmTMB)
+Salamanders
+```
+
+
+```{r lotsofzeros}
+Salamanders %>% 
+  ggplot() +
+  geom_bar(aes(x = count))
+```
+
+
+In `glmmTMB` we can do a zero-inflated negative binomial model to deal with excess zero counts.  Separate models are estimated for the count portion of the data and the binary portion of whether there were zeros or not. The predictors are species type and mining.  In genearl, the syntax is the same as `lme4`.
+
+```{r zinb}
+model = glmmTMB(
+  count ~ spp + mined + (1 | site),
+  zi =  ~ spp + mined,
+  family = nbinom2,
+  data = Salamanders
+)
+
+summary(model)
+# ggeffects::ggpredict(model) %>% plot() # plot expected counts
+```
+
+
+In this case, the mining really has a say on the zero part, where not mining means a notably less chance have a zero.  Furthermore, the count increases dramatically with no mining.
+
+
+```{r eval=FALSE}
+heterovar_res = glmmTMB(Reaction ~ Days + (1|Subject) + diag(0 + factor(Days) |Subject), 
+                         data = lme4::sleepstudy)
+VarCorr(heterovar_res) %>% data.frame()
 ```
 
 
