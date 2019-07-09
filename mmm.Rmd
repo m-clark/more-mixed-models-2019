@@ -115,8 +115,8 @@ In this case, the mining really has a say on the zero part, where not mining mea
 
 ```{r eval=FALSE}
 heterovar_res = glmmTMB(Reaction ~ Days + (1|Subject) + diag(0 + factor(Days) |Subject), 
-                         data = lme4::sleepstudy)
-VarCorr(heterovar_res) %>% data.frame()
+                         data = lme4::sleepstudy %>% filter(Days %in% c(0,4,9)))
+VarCorr(heterovar_res)
 ```
 
 
@@ -141,19 +141,44 @@ Using a Bayesian approach to mixed models means the sky is the limit in terms of
 
 #### rstanarm
 
-> The rstanarm package is an appendage to the rstan package that enables many of the most common applied regression models to be estimated using Markov Chain Monte Carlo, variational approximations to the posterior distribution, or optimization. The rstanarm package allows these models to be specified using the customary R modeling syntax.
+> The `rstanarm` package is an appendage to the `rstan` package that enables many of the most common applied regression models to be estimated using Markov Chain Monte Carlo, variational approximations to the posterior distribution, or optimization. The `rstanarm` package allows these models to be specified using the customary R modeling syntax.
 
 - main function: `stan_*`
 
 #### brms
+
 > The `brms` package provides an interface to fit Bayesian generalized multivariate (non-)linear multilevel models using `Stan`, which is a C++ package for obtaining full Bayesian inference (see http://mc-stan.org/). The formula syntax is an extended version of the syntax applied in the lme4 package to provide a familiar and simple interface for performing regression analyses.
 
 - main function: `brm`
 
 ### Examples
 
+Both brms and rstanarm stick to the lme4 approach as far as syntax is concerned.  So, unless you have a compelling reason not to, there is really no reason to not just do your mixed models as Bayesian ones, especially if you are doing more complicated models.  Note that one distinguishing feature of the Bayesian approach is that the random effects are estimated parameters of the model (*not* BLUPs). 
+
+
+#### rstanarm
+
+```{r eval=FALSE}
+library(rstanarm)
+
+recent_europe = gapminder_2019  %>% 
+  filter(continent == 'Europe', year > 1950) %>% 
+  mutate(year = year-min(year))
+
+model = stan_lmer(giniPercap ~ year + (1 + year|country), 
+                  recent_europe, 
+                  cores=4)
+print(model, digits = 3)
+qplot(data=ranef(model)$country, x=`(Intercept)`, y = year, geom='smooth')
+ggeffects::ggpredict(model) %>% plot()
+```
+
+
+
+#### brms
 ```{r brms}
 library(brms)
+model = brm()
 ```
 
 
