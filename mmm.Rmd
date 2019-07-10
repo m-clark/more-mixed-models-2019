@@ -1,11 +1,13 @@
 ---
 title: "More Mixed Models"
 output:
-  html_document:
-    df_print: paged
+  html_document: 
+    highlight: pygments
+    theme: sandstone
+    toc: yes
   html_notebook:
-editor_options:
-  chunk_output_type: console
+    editor_options:
+      chunk_output_type: console
 ---
 
 ```{r html_setup, include=FALSE}
@@ -18,6 +20,7 @@ knitr::opts_chunk$set(
   cache.rebuild=F, 
   cache=T,
   fig.align='center', 
+  fig.width = 3,
   fig.asp = .7,
   dev = 'svg', 
   dev.args=list(bg = 'transparent')
@@ -200,7 +203,7 @@ Both brms and rstanarm stick to the lme4 approach as far as syntax is concerned.
 
 The `rstanarm` package not only uses the same syntax as `lme4`, you only have to attach the stan prefix to the `lmer` function. Bayesian methods are slower by definition, but for the following model it will only take a few seconds.  
 
-```{r rstanarm}
+```{r rstanarm, fig.width=3}
 library(rstanarm)
 
 
@@ -237,8 +240,9 @@ summary(model_brm)
 
 With the bayesian approach, we get nice summary, model comparison, and model diagnostic information as well.
 
-```{r brms_summary, fig.width=3}
-ranef(model_brm)
+```{r brms_summary}
+ranef(model_brm)$Subject %>% apply(3, rbind)
+marginal_effects(model_brm)
 hypothesis(model_brm, 'Days > 10')    # is the Days coefficient greater than 10?
 pp_check(model_brm)
 pp_check(model_rstanarm, nreps = 10)
