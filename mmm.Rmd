@@ -4,7 +4,8 @@ output:
   html_document: 
     highlight: pygments
     theme: sandstone
-    toc: yes
+    toc: no
+    toc_depth: 3
   html_notebook:
     editor_options:
       chunk_output_type: console
@@ -27,26 +28,28 @@ knitr::opts_chunk$set(
 )
 ```
 
+# Beyond `lme4` {.tabset}
 
-
-## Introduction
+## Introduction 
 
 Mixed models are an extremely useful modeling tool for situations in which there is some dependency among observations in the data, where the correlation typically arises from the observations being clustered in some way. For example, it is quite common to have data in which we have repeated measurements for the units of observation, or in which the units of observation are otherwise grouped together (e.g. students within school, cities within geographic region). While there are different ways to approach such a situation, mixed models are a very common and powerful tool to do so. In addition, they have ties to other statistical approaches that further expand their applicability.
 
-The following depicts a simple mixed model.  We have one predictor `x`, and one grouping variable as an additional source of variance.
+The following depicts a simple mixed model for an observation.  We have however many predictors $\mathscr{x}$, and one grouping variable $\mathscr{group}$ as an additional source of variance.
 
-$$y = b_{\mathrm{intercept}} + b_{\mathrm{x}}\cdot \mathscr{x} + \mathrm{effect}_{\mathscr{group}} + \epsilon$$
+$$y = b_{\mathrm{intercept}} + b_{\mathrm{x_1}}\cdot \mathscr{x_1} + b_{\mathrm{x_2}}\cdot \mathscr{x_2}\ldots + \mathrm{effect}_{\mathscr{group}} + \epsilon$$
 
 $$\mathrm{effect}_{\mathrm{group}} \sim \mathcal{N}(0, \tau^2)$$
 $$\epsilon \sim \mathcal{N}(0, \sigma^2)$$
 
-The above is the simplest model one would come across, often referred to as a random intercepts model, as the group effect is added to the intercept, and otherwise is a standard linear regression model.
+The above is the simplest model one would come across, often referred to as a random intercepts model, as the group effect is added to the intercept, and otherwise is a standard linear regression model.  
 
-We can expand this to include other grouping variables for random effects, and allow any of the coefficients to vary among those groups.  This covers a wide range of modeling situations, and in that case, a package like `lme4` is ideal.  It is fast, efficient, and many other packages expand on it.  As an example `lme4` syntax for a mixed model with random intercepts and slopes looks like the following.
+A concrete example would be something like where we have repeated observations of the same individuals over time.  The group or cluster in this case is the individual, and so we would have a person-specific effect in addition to the rest of the model effects.
+
+We can expand this simple setting to include other grouping variables for random effects, and allow any of the coefficients to vary among those groups.  This covers a wide range of modeling situations, and in that case, a package like `lme4` is ideal.  It is fast, efficient, and many other packages expand on it.  As an example `lme4` syntax for a mixed model with random intercepts and slopes looks like the following.  Here the model regards the average reaction time per day for subjects in a sleep deprivation study.  We random effects for the intercept and coefficient/slope for the Days (i.e. time effect).
 
 ```{r lme4}
 library(lme4)
-model_lme4 = lmer(Reaction ~ Days + (Days|Subject), sleepstudy)
+model_lme4 = lmer(Reaction ~ Days + (1 + Days|Subject), sleepstudy)
 summary(model_lme4)
 ```
 
@@ -55,12 +58,12 @@ summary(model_lme4)
 However, there will be times where your data and model go beyond situations `lme4` is best suited for, and if so, there are additional tools that can aid you in your exploration.
 
 
-## Goals
+### Goals
 
 - Demonstrate other packages and their approach to mixed models
 - Provide awareness of other possibilities for mixed models
 
-## Prerequisites
+### Prerequisites
 
 You need to have these libraries for data sets, data processing, and visualization.
 
@@ -89,7 +92,7 @@ sleepstudy_trim =  sleepstudy %>%
 ```
 
 
-## glmmTMB
+## glmmTMB {.tabset}
 
 ### Description
 
@@ -100,11 +103,13 @@ estimation via 'TMB' (Template Model Builder).
 - main function: `glmmTMB`
     
 
-The glmmTMB package uses a different approach in estimating mixed models, which may be reason enough to use for some problems where `lme4` might struggle.  In general though, it tackles various other kinds of mixed models that `lme4` is not designed to.
+The `glmmTMB` package uses a different approach in estimating mixed models, which may be reason enough to use for some problems where `lme4` might struggle.  In general though, it tackles various kinds of mixed models that `lme4` is not designed to.
     
 ### Examples
 
-We can start with an example for zero-inflated models.  These are primarily count distribution models with an added component to deal with excess zeros.  
+#### Zero-inflated models
+
+We can start with an example for zero-inflated models.  These are primarily count distribution models with an added component to deal with excess zeros.  The data regards counts of salamanders with site covariates and sampling covariates. Each of 23 sites was sampled 4 times.  We'll use the following variables:
 
 - **site**: name of a location where repeated samples were taken
 
@@ -117,17 +122,22 @@ library(glmmTMB)
 Salamanders
 ```
 
+We can see the zero spike visually.
 
-```{r lotsofzeros}
+```{r lotsofzeros, echo=FALSE}
 Salamanders %>% 
   ggplot() +
   geom_bar(aes(x = count))
 ```
 
 
-In `glmmTMB` we can do a zero-inflated negative binomial model to deal with excess zero counts.  Separate models are estimated for the count portion of the data and the binary portion of whether there were zeros or not. The predictors are species type and mining.  In genearl, the syntax is the same as `lme4`.
+In `glmmTMB` we can do a zero-inflated negative binomial model to deal with excess zero counts.  Separate models are estimated for the count portion of the data and the binary portion (i.e. zeros vs non-zero). The predictors are species type and mining.  In general, the syntax is the same as `lme4`.  In this case we'll do a mixed model only for the count portion, but feel free to play with the model.
 
 ```{r zinb}
+# Make mined more intuitive
+Salamanders = Salamanders %>% 
+  mutate(mined = fct_relevel(mined, 'no'))
+
 model_zinb = glmmTMB(
   count ~ spp + mined + (1 | site),
   zi =  ~ spp + mined,
@@ -136,36 +146,42 @@ model_zinb = glmmTMB(
 )
 
 summary(model_zinb)
+```
+
+
+In this case, the mining really has a say on the zero part of the model, where mining means a notably greater chance to have a zero count, but also fewer counts in general.  We can see that the expected count increases dramatically with no mining.
+
+```{r zinb_plot}
 ggpredict(model_zinb) %>% plot() # plot expected counts
 ```
 
 
-In this case, the mining really has a say on the zero part, where not mining means a notably less chance have a zero.  Furthermore, the count increases dramatically with no mining.
+#### Heterogeneous variances and autocorrelation
 
-
-Sometimes we want to allow for heterogenous variances or autocorrelated residuals.  The glmmTMB has a specific syntax for this.  The following allows for different variance estimates at each time point.
+Sometimes we want to allow for heterogeneous variances or auto-correlated residuals.  The `glmmTMB` package has a specific syntax for this.  The following allows for different variance estimates at each time point.
 
 ```{r heterovar}
-
-
 model_heterovar = glmmTMB(Reaction ~ Days + (1 | Subject) + diag(0 + Days | Subject), 
                           data = sleepstudy_trim)
 summary(model_heterovar)
 ```
 
 
-In this case, variance increases over time.  Note that the correlations are all zero.  glmmTMB can allow for such correlation using other functions rather than diag, such as autoregressive, spatial and more.
+In this case, variance increases over time.  Note that the correlations are all zero.  glmmTMB can allow for such correlation using other functions rather than `diag`, such as autoregressive, spatial and more.  To be honest, you'll likely learn that many of these models are simply hard to fit, in which case, you might consder Bayesian methods.
 
 
-```{r unstructured}
-model_unstructured = glmmTMB(Reaction ~ Days + (1 | Subject) + ar1(0 + Days | Subject), 
-                             data = sleepstudy_trim)
-summary(model_unstructured)
+```{r ar, eval=FALSE}
+model_ar1 = glmmTMB(lifeExp ~ scale(year) + log(pop) + scale(giniPercap) + 
+                               (1 | country) + 
+                               ar1(0 + factor(year) | country), 
+                             dispformula=~0,
+                             data = gapminder_2019 %>% filter(year > 1980))
+summary(model_ar1)
 ```
 
 ### Advantages
 
-- Developed by one of the lme4 authors
+- Developed by one of the `lme4` authors
 - More distributions
 - Heterogeneous variance, residual correlation
 - Model variance
@@ -176,9 +192,8 @@ summary(model_unstructured)
 - Still in development for some areas
 
 
-## Bayesian Approaches
+## Bayesian Approaches {.tabset}
 
-Using a Bayesian approach to mixed models means the sky is the limit in terms of model flexibility.
 
 ### Description
 
@@ -193,6 +208,10 @@ Using a Bayesian approach to mixed models means the sky is the limit in terms of
 > The `brms` package provides an interface to fit Bayesian generalized multivariate (non-)linear multilevel models using `Stan`, which is a C++ package for obtaining full Bayesian inference (see http://mc-stan.org/). The formula syntax is an extended version of the syntax applied in the lme4 package to provide a familiar and simple interface for performing regression analyses.
 
 - main function: `brm`
+
+
+Using a Bayesian approach to mixed models means the sky is the limit in terms of model flexibility.  And once you get used to the Bayesian tools, much can be done with model exploration.
+
 
 ### Examples
 
@@ -294,9 +313,9 @@ loo_compare(model_brm_std, model_brm, criterion = 'waic')
 - Bayesian techniques are slower due to the way they are estimated, but for many situations not prohibitively so
 
 
-## mgcv
+## mgcv {.tabset}
 
-#### Description
+### Description
 
 > `mgcv` provides functions for generalized additive modelling (`gam` and `bam`) and generalized additive mixed modelling (`gamm`, and `random.effects`). The term GAM is taken to include any model dependent on unknown smooth functions of predictors and estimated by quadratically penalized (possibly quasi-) likelihood maximization. Available distributions are covered in `family.mgcv` and available smooths in `smooth.terms.`
 
@@ -308,7 +327,7 @@ loo_compare(model_brm_std, model_brm, criterion = 'waic')
 
 Simply put, `mgcv` is one of the better modeling packages you'll come across.  One can use a general approach to go from complex models to simple group comparisons in a principled way, satisfying a great majority of modeling needs.  For our purposes here it's enough to note that there is a specific link between additive and mixed models such that they can be specified in the same way.  The benefit for applied users is that one can use the gam approach to do their mixed modeling.
 
-#### Examples
+### Examples
 
 
 
@@ -373,17 +392,17 @@ VarCorr(lmer(giniPercap ~ year  + (1 | country) + (0 + year | country),
 
 The mgcv package is one of the most powerful modeling tools in the R world in my opinion.  It can be used just for standard mixed models if desired.  It will be slower than lme4 for standard linear mixed models, but not prohibitively so, especially if you use bam.  If you go beyond such models, I've found it to be far faster than lme4 for very large glmm.
 
-## Python Statsmodels
+## Python Statsmodels {.tabset}
 
 If you happen to be using Python, you don't have to switch to another tool to do mixed models.
 
-#### Description
+### Description
 
 > Statsmodels MixedLM handles most non-crossed random effects models, and some crossed models. To include crossed random effects in a model, it is necessary to treat the entire dataset as a single group. The variance components arguments to the model can then be used to define models with various combinations of crossed and non-crossed random effects.
 > 
 > The Statsmodels LME framework currently supports post-estimation inference via Wald tests and confidence intervals on the coefficients, profile likelihood analysis, likelihood ratio testing, and AIC.
 
-#### Examples
+### Examples
 
 
 ```{python statsmodels, eval = T, cache=FALSE}
