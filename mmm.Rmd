@@ -6,6 +6,7 @@ output:
     theme: sandstone
     toc: no
     toc_depth: 3
+    df_print: paged
   html_notebook:
     editor_options:
       chunk_output_type: console
@@ -167,15 +168,15 @@ summary(model_heterovar)
 ```
 
 
-In this case, variance increases over time.  Note that the correlations are all zero.  glmmTMB can allow for such correlation using other functions rather than `diag`, such as autoregressive, spatial and more.  To be honest, you'll likely learn that many of these models are simply hard to fit, in which case, you might consder Bayesian methods.
+In this case, variance increases over time.  Note that the correlations are all zero.  glmmTMB can allow for such correlation using other functions rather than `diag`, such as autoregressive, spatial and more (details [here](https://cran.r-project.org/web/packages/glmmTMB/vignettes/covstruct.html)).  To be honest, you'll likely learn that many of these models are simply hard to fit, in which case, you might consder Bayesian methods.
 
 
-```{r ar, eval=FALSE}
+```{r ar}
 model_ar1 = glmmTMB(lifeExp ~ scale(year) + log(pop) + scale(giniPercap) + 
-                               (1 | country) + 
-                               ar1(0 + factor(year) | country), 
-                             dispformula=~0,
-                             data = gapminder_2019 %>% filter(year > 1980))
+                      (1 | country) + 
+                      ar1(0 + factor(year) | country), 
+                    dispformula=~0,
+                    data = gapminder_2019 %>% filter(year > 1980) %>% arrange(country, year))
 summary(model_ar1)
 ```
 
@@ -210,12 +211,12 @@ summary(model_ar1)
 - main function: `brm`
 
 
-Using a Bayesian approach to mixed models means the sky is the limit in terms of model flexibility.  And once you get used to the Bayesian tools, much can be done with model exploration.
+Using a Bayesian approach to mixed models means the sky is the limit in terms of model flexibility.  And once you get used to the Bayesian tools, much can be done with model exploration, even for standard models.
 
 
 ### Examples
 
-Both brms and rstanarm stick to the lme4 approach as far as syntax is concerned.  So, unless you have a compelling reason not to, there is really no reason to not just do your mixed models as Bayesian ones, especially if you are doing more complicated models.  Note that one distinguishing feature of the Bayesian approach is that the random effects are estimated parameters of the model (*not* BLUPs). 
+Both `brms` and `rstanarm` stick to the `lme4` approach as far as syntax is concerned.  So, unless you have a compeling reason not to, there is really no reason to not just do your mixed models as Bayesian ones, especially if you are doing more complicated models.  Note that one distinguishing feature of the Bayesian approach is that the random effects are estimated parameters of the model (*not* BLUPs). 
 
 
 #### rstanarm
@@ -244,7 +245,7 @@ qplot(
 
 #### brms
 
-The brms package by contrast has only one modeling function `brm`.  Again, the syntax is `lme4` style, but we can easily specify other alternatives.  Note that the additional flexibility requires brms to compile to Stan first, rather than using a prespecified model template.  However, even switching to 'robust' student t rather than normal distribution and adding autocorrelation still results in a model that only takes a few seconds after compilation.
+The `brms` package by contrast has only one modeling function `brm`.  Again, the syntax is `lme4` style, but we can easily specify other alternatives.  Note that the additional flexibility requires `brms` to compile to Stan first, rather than using a prespecified model template.  However, even switching to 'robust' student t rather than normal distribution and adding autocorrelation still results in a model that only takes a few seconds after compilation.
 
 ```{r brms}
 library(brms)
@@ -257,15 +258,26 @@ model_brm = brm(Reaction ~ Days + (Days | Subject),
 summary(model_brm)
 ```
 
-With the bayesian approach, we get nice summary, model comparison, and model diagnostic information as well.
+With the Bayesian approach, we get nice summary, model comparison, and model diagnostic information as well.
 
 ```{r brms_summary}
-ranef(model_brm)$Subject %>% apply(3, rbind)
+ranef(model_brm)$Subject %>% apply(3, rbind) %>% as_tibble()
 marginal_effects(model_brm)
 hypothesis(model_brm, 'Days > 10')    # is the Days coefficient greater than 10?
-pp_check(model_brm)
-pp_check(model_rstanarm, nreps = 10)
 ```
+
+
+```{r compare_models_r2}
+bayes_R2(model_rstanarm) %>% summary()
+bayes_R2(model_brm)
+```
+
+
+```{r compare_models_pp_check}
+pp_check(model_rstanarm, nreps = 10) + lims(x = c(0,600))
+pp_check(model_brm) + lims(x = c(0,600))
+```
+
 
 ```{r compare_models}
 model_brm_std = brm(Reaction ~ Days + (Days | Subject),
@@ -311,6 +323,7 @@ loo_compare(model_brm_std, model_brm, criterion = 'waic')
 ### Other
 
 - Bayesian techniques are slower due to the way they are estimated, but for many situations not prohibitively so
+- Great documentation and resources for Stan and its R family of packages
 
 
 ## mgcv {.tabset}
@@ -325,7 +338,7 @@ loo_compare(model_brm_std, model_brm, criterion = 'waic')
 - `gamm4` (package)
 
 
-Simply put, `mgcv` is one of the better modeling packages you'll come across.  One can use a general approach to go from complex models to simple group comparisons in a principled way, satisfying a great majority of modeling needs.  For our purposes here it's enough to note that there is a specific link between additive and mixed models such that they can be specified in the same way.  The benefit for applied users is that one can use the gam approach to do their mixed modeling.
+Simply put, `mgcv` is one of the better modeling packages you'll come across.  One can use a general approach to go from complex models to simple group comparisons in a principled way, satisfying a great majority of modeling needs.  For our purposes here it's enough to note that there is a specific link between additive and mixed models, such that they can be specified in the same way.  The benefit of this for applied users is that one can use the GAM approach to do their mixed modeling.
 
 ### Examples
 
@@ -360,8 +373,15 @@ model_mgcv_ran_slope = gam(giniPercap ~ year + s(country, bs='re') + s(year, cou
                            data = recent_europe, 
                            method = 'REML')
 summary(model_mgcv_ran_slope)
+```
+
+Extract the variance components.
+
+```{r mgcv_vc}
 gam.vcomp(model_mgcv_ran_slope)
 ```
+
+
 
 Compare to `lme4`
 
@@ -405,7 +425,7 @@ If you happen to be using Python, you don't have to switch to another tool to do
 ### Examples
 
 
-```{python statsmodels, eval = T, cache=FALSE}
+```{python statsmodels, engine.path= '/Users/micl/anaconda3/bin/python', eval = T}
 import statsmodels.api as sm
 
 import statsmodels.formula.api as smf
@@ -417,7 +437,7 @@ mdf = md.fit()
 print(mdf.summary())
 ```
 
-```{python mixed}
+```{python mixed, eval = FALSE}
 import pandas as pd
 mdf.conf_int()                                 # ci for fixed effects and variance components
 pd.DataFrame.from_dict(mdf.random_effects)     # extract random effects
@@ -431,3 +451,9 @@ mdf.fe_params                                  # extract fixed effects
 - Clean/clear printout
 
 ### Other
+
+- Fairly limited relative to R options
+
+## Summary
+
+The `lme4` package is a fantastic tool for mixed models, but it does have limitations that will likely not make it the best tool for some not uncommon data situations.  The packages demoed here provide enough options that you will be able to run just about any model you like when the time comes.
