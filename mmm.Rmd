@@ -85,6 +85,10 @@ recent_europe = gapminder_2019  %>%
   filter(continent == 'Europe', year > 1950) %>% 
   mutate(year = year-min(year))
 
+recent_all_country = gapminder_2019 %>% 
+  filter(year > 1980) %>% 
+  arrange(country, year)
+
 
 sleepstudy = lme4::sleepstudy
 sleepstudy_trim =  sleepstudy %>% 
@@ -134,7 +138,7 @@ Salamanders %>%
 
 In `glmmTMB` we can do a zero-inflated negative binomial model to deal with excess zero counts.  Separate models are estimated for the count portion of the data and the binary portion (i.e. zeros vs non-zero). The predictors are species type and mining.  In general, the syntax is the same as `lme4`.  In this case we'll do a mixed model only for the count portion, but feel free to play with the model.
 
-```{r zinb}
+```{r glmmTMB_zinb}
 # Make mined more intuitive
 Salamanders = Salamanders %>% 
   mutate(mined = fct_relevel(mined, 'no'))
@@ -152,16 +156,25 @@ summary(model_zinb)
 
 In this case, the mining really has a say on the zero part of the model, where mining means a notably greater chance to have a zero count, but also fewer counts in general.  We can see that the expected count increases dramatically with no mining.
 
-```{r zinb_plot}
+```{r glmmTMB_zinb_plot}
 ggpredict(model_zinb) %>% plot() # plot expected counts
 ```
+
+
+As with `lme4`, we can extract fixed effects, random effects, etc., and generally go about our business as usual.
+
+```{r glmmTMB_fixef_ranef}
+fixef(model_zinb)
+as.data.frame(ranef(model_zinb))
+```
+
 
 
 #### Heterogeneous variances and autocorrelation
 
 Sometimes we want to allow for heterogeneous variances or auto-correlated residuals.  The `glmmTMB` package has a specific syntax for this.  The following allows for different variance estimates at each time point.
 
-```{r heterovar}
+```{r glmmTMB_heterovar}
 model_heterovar = glmmTMB(Reaction ~ Days + (1 | Subject) + diag(0 + Days | Subject), 
                           data = sleepstudy_trim)
 summary(model_heterovar)
@@ -171,14 +184,16 @@ summary(model_heterovar)
 In this case, variance increases over time.  Note that the correlations are all zero.  glmmTMB can allow for such correlation using other functions rather than `diag`, such as autoregressive, spatial and more (details [here](https://cran.r-project.org/web/packages/glmmTMB/vignettes/covstruct.html)).  To be honest, you'll likely learn that many of these models are simply hard to fit, in which case, you might consder Bayesian methods.
 
 
-```{r ar}
+```{r glmmTMB_ar}
 model_ar1 = glmmTMB(lifeExp ~ scale(year) + log(pop) + scale(giniPercap) + 
                       (1 | country) + 
                       ar1(0 + factor(year) | country), 
                     dispformula=~0,
-                    data = gapminder_2019 %>% filter(year > 1980) %>% arrange(country, year))
+                    data = recent_all_country)
 summary(model_ar1)
 ```
+
+
 
 ### Advantages
 
@@ -216,36 +231,40 @@ Using a Bayesian approach to mixed models means the sky is the limit in terms of
 
 ### Examples
 
-Both `brms` and `rstanarm` stick to the `lme4` approach as far as syntax is concerned.  So, unless you have a compeling reason not to, there is really no reason to not just do your mixed models as Bayesian ones, especially if you are doing more complicated models.  Note that one distinguishing feature of the Bayesian approach is that the random effects are estimated parameters of the model (*not* BLUPs). 
+Both `brms` and `rstanarm` stick to the `lme4` approach as far as syntax is concerned.  So, unless you have a compeling reason not to, there is really no reason not to just do your mixed models as Bayesian ones, especially if you are doing more complicated models.  Note that one distinguishing feature of the Bayesian approach is that the random effects are estimated parameters of the model (*not* BLUPs). 
 
 
 #### rstanarm
 
-The `rstanarm` package not only uses the same syntax as `lme4`, you only have to attach the stan prefix to the `lmer` function. Bayesian methods are slower by definition, but for the following model it will only take a few seconds.  
+The `rstanarm` package not only uses the same syntax as `lme4`, you only have to attach the stan prefix to the `lmer` function. Bayesian methods are slower by definition, but the following model will only take a few seconds.  
 
-```{r rstanarm, fig.width=3}
+```{r rstanarm}
 library(rstanarm)
-
 
 model_rstanarm = stan_lmer(Reaction ~ Days + (Days | Subject),
                            sleepstudy,
                            cores = 4)  # for parallelization
                            
 print(model_rstanarm, digits = 3)
+```
 
+```{r rstanarm_ouptut, fig.width=7}
+str(ranef(model_rstanarm))
+plot(model_rstanarm, regex_pars = 'b\\[\\(Intercept')
+```
+
+```{r rstanarm_ouptut2}
 qplot(
   data = ranef(model_rstanarm)$Subject,
   x = `(Intercept)`,
   y = Days,
-  geom = c('point','smooth')
+  geom = 'point'
 )
 ```
 
-
-
 #### brms
 
-The `brms` package by contrast has only one modeling function `brm`.  Again, the syntax is `lme4` style, but we can easily specify other alternatives.  Note that the additional flexibility requires `brms` to compile to Stan first, rather than using a prespecified model template.  However, even switching to 'robust' student t rather than normal distribution and adding autocorrelation still results in a model that only takes a few seconds after compilation.
+The `brms` package by contrast has only one modeling function `brm`.  Again, for mixed models the syntax is `lme4` style, but we can easily specify other alternatives.  Note that the additional flexibility requires `brms` to compile to Stan code first, rather than using a prespecified model template, which takes additional time.  However, even switching to 'robust' student t rather than normal distribution, and adding autocorrelation, still results in a model that only takes a few seconds after compilation.
 
 ```{r brms}
 library(brms)
@@ -322,7 +341,7 @@ loo_compare(model_brm_std, model_brm, criterion = 'waic')
 
 ### Other
 
-- Bayesian techniques are slower due to the way they are estimated, but for many situations not prohibitively so
+- Bayesian techniques are slower due to the way they are estimated, but for most situations not prohibitively so
 - Great documentation and resources for Stan and its R family of packages
 
 
@@ -338,7 +357,7 @@ loo_compare(model_brm_std, model_brm, criterion = 'waic')
 - `gamm4` (package)
 
 
-Simply put, `mgcv` is one of the better modeling packages you'll come across.  One can use a general approach to go from complex models to simple group comparisons in a principled way, satisfying a great majority of modeling needs.  For our purposes here it's enough to note that there is a specific link between additive and mixed models, such that they can be specified in the same way.  The benefit of this for applied users is that one can use the GAM approach to do their mixed modeling.
+Simply put, `mgcv` is one of the better modeling packages you'll come across.  One can use a general approach to go from simple group comparisons to complex models in a principled way, satisfying a great majority of modeling needs.  For our purposes here it's enough to note that there is a specific link between additive and mixed models, such that they can be specified in the same way.  The benefit of this for applied users is that one can use the GAM approach to do their mixed modeling.
 
 ### Examples
 
@@ -398,7 +417,7 @@ VarCorr(lmer(giniPercap ~ year  + (1 | country) + (0 + year | country),
 - spatial random effects
 - autocorrelation
 - more distributions
-- can use lme4 or nlme in conjunction
+- can use lme4 or nlme in conjunction via `gamm4` package or `gamm` function respectively
 - seems to work better for glm
 - much better for very large data glm
 - bayesian prediction intervals
@@ -418,14 +437,14 @@ If you happen to be using Python, you don't have to switch to another tool to do
 
 ### Description
 
-> Statsmodels MixedLM handles most non-crossed random effects models, and some crossed models. To include crossed random effects in a model, it is necessary to treat the entire dataset as a single group. The variance components arguments to the model can then be used to define models with various combinations of crossed and non-crossed random effects.
+> Statsmodels MixedLM handles most non-crossed random effects models, and some crossed models...
 > 
 > The Statsmodels LME framework currently supports post-estimation inference via Wald tests and confidence intervals on the coefficients, profile likelihood analysis, likelihood ratio testing, and AIC.
 
 ### Examples
 
 
-```{python statsmodels, engine.path= '/Users/micl/anaconda3/bin/python', eval = T}
+```{python statsmodels, eval = T}
 import statsmodels.api as sm
 
 import statsmodels.formula.api as smf
