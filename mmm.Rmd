@@ -10,6 +10,7 @@ output:
   html_notebook:
     editor_options:
       chunk_output_type: console
+css: mmm.css
 ---
 
 ```{r html_setup, include=FALSE}
@@ -42,11 +43,14 @@ $$y = b_{\mathrm{intercept}} + b_{\mathrm{x_1}}\cdot \mathscr{x_1} + b_{\mathrm{
 $$\mathrm{effect}_{\mathrm{group}} \sim \mathcal{N}(0, \tau^2)$$
 $$\epsilon \sim \mathcal{N}(0, \sigma^2)$$
 
-The above is the simplest model one would come across, often referred to as a random intercepts model, as the group effect is added to the intercept, and otherwise is a standard linear regression model.  
+$$ \mathrm{'fixed'\ intercept} = b_{\mathrm{intercept}}$$
+$$ \mathrm{random \ intercept} = (b_{\mathrm{intercept}} + \mathrm{effect}_{\mathrm{group}})$$
+
+The above is the simplest mixed model one would come across, often referred to as a random intercepts model, as the group effect is added to the intercept, and otherwise is a standard linear regression model.  
 
 A concrete example would be something like where we have repeated observations of the same individuals over time.  The group or cluster in this case is the individual, and so we would have a person-specific effect in addition to the rest of the model effects.
 
-We can expand this simple setting to include other grouping variables for random effects, and allow any of the coefficients to vary among those groups.  This covers a wide range of modeling situations, and in that case, a package like `lme4` is ideal.  It is fast, efficient, and many other packages expand on it.  As an example `lme4` syntax for a mixed model with random intercepts and slopes looks like the following.  Here the model regards the average reaction time per day for subjects in a sleep deprivation study.  We random effects for the intercept and coefficient/slope for the Days (i.e. time effect).
+We can expand this simple setting to include other grouping variables for random effects, and allow any of the coefficients to vary among those groups.  This covers a wide range of modeling situations, and in that case, a package like `lme4` is ideal.  It is fast, efficient, and many other packages expand on it.  As an example, `lme4` syntax for a mixed model with random intercepts and slopes looks like the following.  Here the model regards the average reaction time per day for subjects in a sleep deprivation study.  We random effects for the intercept and coefficient/slope for the Days (i.e. time effect).
 
 ```{r lme4}
 library(lme4)
@@ -363,7 +367,7 @@ Simply put, `mgcv` is one of the better modeling packages you'll come across.  O
 
 
 
-The following shows the basic mgcv approach to a GAM.
+The following shows the basic mgcv approach to a GAM.  Here we add a special approach to modeling the time trend, allowing it to be more flexible than a standard linear effect.  Behind the scenes the estimation approach strives to not be too 'wiggly', but does allow the data to better speak for itself.
 
 ```{r mgcv_basic}
 library(mgcv)
@@ -372,7 +376,7 @@ summary(model_mgcv)
 ggpredict(model_mgcv) %>% plot()
 ```
 
-Lets do a random intercept model with a country random effect.
+In the case of mixed models, we don't necessarily have to explore such effects, but now we have a tool that would allow us to do so while adding random effects. Lets do a random intercept model with a country random effect.
 
 ```{r mgcv_re}
 recent_europe = recent_europe %>% 
@@ -385,6 +389,9 @@ summary(model_mgcv_re)
 gam.vcomp(model_mgcv_re)
 
 ```
+
+
+Now, let's add a random coefficient for the year effect, and compare it to the corresponding `lme4` model.
 
 
 ```{r mgcv_slope}
@@ -402,7 +409,7 @@ gam.vcomp(model_mgcv_ran_slope)
 
 
 
-Compare to `lme4`
+Compare to `lme4`.
 
 ```{r mgcv_vs_lme4}
 VarCorr(lmer(giniPercap ~ year  + (1 | country) + (0 + year | country), 
@@ -433,13 +440,15 @@ The mgcv package is one of the most powerful modeling tools in the R world in my
 
 ## Python Statsmodels {.tabset}
 
-If you happen to be using Python, you don't have to switch to another tool to do mixed models.
 
 ### Description
 
 > Statsmodels MixedLM handles most non-crossed random effects models, and some crossed models...
 > 
 > The Statsmodels LME framework currently supports post-estimation inference via Wald tests and confidence intervals on the coefficients, profile likelihood analysis, likelihood ratio testing, and AIC.
+
+
+Python has come a notable way in recent times with regard to statistical modeling, and that includes mixed models (thanks to CSCAR director Kerby Shedden).  Much of traditional statistical modeling can be found wtih the `Statsmodels` module.  This means that if you happen to be using Python for a particular project, you don't necessarily have to switch to another tool to do mixed models.
 
 ### Examples
 
