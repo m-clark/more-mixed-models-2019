@@ -448,9 +448,9 @@ import statsmodels.formula.api as smf
 import pandas as pd
 
 model_mixed_base = smf.mixedlm("Reaction ~ Days", 
-                 data = r.sleepstudy, 
-                 groups = r.sleepstudy["Subject"], 
-                 re_formula="~Days")
+                               data = r.sleepstudy, 
+                               groups = r.sleepstudy["Subject"], 
+                               re_formula="~Days")
 
 model_mixed = model_mixed_base.fit()
 
