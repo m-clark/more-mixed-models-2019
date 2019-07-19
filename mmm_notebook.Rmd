@@ -1,36 +1,19 @@
 ---
-title: "More Mixed Models"
+title: "More Mixed Models Notebook"
 output:
-  html_document: 
+  html_notebook:
+    editor_options:
+      chunk_output_type: inline
     highlight: pygments
     theme: sandstone
     toc: no
     toc_depth: 3
     df_print: paged
-  html_notebook:
-    editor_options:
-      chunk_output_type: console
 css: mmm.css
 ---
 
-```{r html_setup, include=FALSE}
-knitr::opts_chunk$set(
-  echo=T, 
-  message = F, 
-  warning = F, 
-  comment = NA,
-  R.options=list(width=120), 
-  cache.rebuild=F, 
-  cache=T,
-  fig.align='center', 
-  fig.width = 3,
-  fig.asp = .7,
-  dev = 'svg', 
-  dev.args=list(bg = 'transparent')
-)
-```
 
-# Beyond `lme4` {.tabset}
+# Beyond `lme4` 
 
 ## Introduction 
 
@@ -75,8 +58,12 @@ You need to have these libraries for data sets, data processing, and visualizati
 ```{r preliminaries}
 library(tidyverse)
 
-# devtools::install_github('m-clark/noiris')
+# devtools::install_github('m-clark/noiris')  # will take a couple minutes
 library(noiris)
+
+# alternatively 
+# load(url('https://github.com/m-clark/more-mixed-models-2019/raw/master/data/gapminder_2019.RData'))
+# load('data/gapminder_2019.RData')  # if you downloaded the repo
 
 # install.packages(ggeffects)
 library(ggeffects)
@@ -101,7 +88,7 @@ sleepstudy_trim =  sleepstudy %>%
 ```
 
 
-## glmmTMB {.tabset}
+## glmmTMB 
 
 ### Description
 
@@ -212,7 +199,7 @@ summary(model_ar1)
 - Still in development for some areas
 
 
-## Bayesian Approaches {.tabset}
+## Bayesian Approaches 
 
 
 ### Description
@@ -252,7 +239,7 @@ model_rstanarm = stan_lmer(Reaction ~ Days + (Days | Subject),
 print(model_rstanarm, digits = 3)
 ```
 
-```{r rstanarm_ouptut, fig.width=7}
+```{r rstanarm_ouptut}
 str(ranef(model_rstanarm))
 plot(model_rstanarm, regex_pars = 'b\\[\\(Intercept')
 ```
@@ -349,7 +336,7 @@ loo_compare(model_brm_std, model_brm, criterion = 'waic')
 - Great documentation and resources for Stan and its R family of packages
 
 
-## mgcv {.tabset}
+## mgcv 
 
 ### Description
 
@@ -440,7 +427,7 @@ VarCorr(lmer(giniPercap ~ year  + (1 | country) + (0 + year | country),
 
 
 
-## Python Statsmodels {.tabset}
+## Python Statsmodels 
 
 
 ### Description
@@ -455,7 +442,7 @@ Python has come a notable way in recent times with regard to statistical modelin
 ### Examples
 
 
-```{python statsmodels, cache = F}
+```{python statsmodels}
 import statsmodels.api as sm
 import statsmodels.formula.api as smf
 import pandas as pd
