@@ -7,6 +7,7 @@
 <meta charset="utf-8" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 
@@ -1551,7 +1552,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
       if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
       var style = rule.style.cssText;
       // check if color or background-color is set
-      if (rule.style.color === '' || rule.style.backgroundColor === '') continue;
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
       // replace div.sourceCode by a pre.sourceCode rule
       sheets[i].deleteRule(j);
       sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
@@ -1682,18 +1683,6 @@ summary {
   display: none;
 }
 </style>
-
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
-  });
-});
-</script>
 
 <!-- code folding -->
 
@@ -2436,6 +2425,46 @@ dtype: float64</code></pre>
 </ul>
 </div>
 </div>
+<div id="julia-mixedmodels" class="section level2 tabset">
+<h2>Julia MixedModels</h2>
+<div id="description-4" class="section level3">
+<h3>Description</h3>
+<blockquote>
+<p>MixedModels.jl is a Julia package providing capabilities for fitting and examining linear and generalized linear mixed-effect models. It is similar in scope to the lme4 package for R.</p>
+</blockquote>
+</div>
+<div id="examples-4" class="section level3">
+<h3>Examples</h3>
+<p>Basic model. The fitting is a little verbose, but takes the same approach as Python in specifying the model as a separate object (<code>LinearMixedModel</code>) and subsequently fitting it.</p>
+<div class="sourceCode" id="cb64"><pre class="sourceCode julia"><code class="sourceCode julia"><a class="sourceLine" id="cb64-1" title="1">using MixedModels, RDatasets</a>
+<a class="sourceLine" id="cb64-2" title="2"></a>
+<a class="sourceLine" id="cb64-3" title="3">sleepstudy = dataset(<span class="st">&quot;lme4&quot;</span>, <span class="st">&quot;sleepstudy&quot;</span>)</a>
+<a class="sourceLine" id="cb64-4" title="4"></a>
+<a class="sourceLine" id="cb64-5" title="5">model_sleep = fit!(LinearMixedModel(@formula(Reaction ~ Days + (<span class="fl">1</span>+Days|Subject)), </a>
+<a class="sourceLine" id="cb64-6" title="6">                                    sleepstudy))</a>
+<a class="sourceLine" id="cb64-7" title="7"></a>
+<a class="sourceLine" id="cb64-8" title="8">model_sleep</a></code></pre></div>
+<p>Extra. Keeps the same naming conventions as <code>lme4</code>.</p>
+<div class="sourceCode" id="cb65"><pre class="sourceCode julia"><code class="sourceCode julia"><a class="sourceLine" id="cb65-1" title="1">fixef(model_sleep)</a>
+<a class="sourceLine" id="cb65-2" title="2">ranef(model_sleep)</a>
+<a class="sourceLine" id="cb65-3" title="3">VarCorr(model_sleep)</a></code></pre></div>
+</div>
+<div id="advantages-4" class="section level3">
+<h3>Advantages</h3>
+<ul>
+<li>Developed by one of the <code>lme4</code> authors</li>
+<li>Mostly adheres to lme4 approach and function names</li>
+<li>Using Julia can result in faster model building</li>
+<li>Some nice means toward do exploration, e.g. via bootstrap</li>
+</ul>
+</div>
+<div id="other-4" class="section level3">
+<h3>Other</h3>
+<ul>
+<li>Fairly limited relative to R options</li>
+</ul>
+</div>
+</div>
 <div id="summary" class="section level2">
 <h2>Summary</h2>
 <p>The <code>lme4</code> package is a fantastic tool for mixed models, but it does have limitations that will likely not make it the best tool for some not uncommon data situations. The packages demonstrated here provide enough options that you will be able to run just about any model you like when the time comes.</p>
@@ -2459,6 +2488,23 @@ $(document).ready(function () {
 
 
 </script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>
